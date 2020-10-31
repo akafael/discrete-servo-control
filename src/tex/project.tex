@@ -5,22 +5,71 @@
 % ------------------------------------------------------------------------------
 \input{relat_layout.tex}
 
-\usepackage{circuitikz}
+%\usepackage{circuitikz}
 
-\title{Projeto} % Define o título do Relatório
+\title{Proposta de projeto - Controle discreto de uma motor DC} % Define o título do Relatório
 \author{Rafael Lima}
 
 % Definições Auxiliares ( Macros próprias )
 % ------------------------------------------------------------------------------
 %\input{relat_aux.tex} % Arquivo com minhas macros
-\newcommand{\npy}[1]{\sympy{round(#1,4)}}
 % ----------------------------------~>ø<~---------------------------------------
 \begin{document}
 % Capa e Índice ----------------------------------------------------------------
 \input{relat_capa.tex} % Capa para UnB
 % Conteúdo ---------------------------------------------------------------------
 
-\section{Projeto de Controlador no Espaço de Estados}
+\section{Introdução}
+
+A presente proposta de projeto propõe o desenvolvimento de um sistema de controle discreto para uma planta composta por um motor DC (motor de corrente contínua), um sistema de redução e um sensor encoder de maneira a permitir o controle da posição a partir de um sinal de referência.
+
+O motor de corrente contínua é amplamente utilizado em projetos de eletrônica e sua modelagem também está  
+
+Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma planta real. O conjunto de peças foi retirada de um equipamento antigo que havia sido descartado. Para implementação do controle, além da planta será utilizado um Arduino UNO e uma módulo com uma ponte H para o controle de potência conforme mostrado na figura \ref{fig:dcmotor_mount}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.32\linewidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{src/tex/img/servomotor.jpg}
+        \caption{Conjunto Motor DC + Encoder}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\linewidth}
+        \centering
+        \includegraphics[height=0.9\linewidth, angle=90]{src/tex/img/arduinoUNO.jpg}
+        \caption{Arduino UNO}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{src/tex/img/ponteH.jpg}
+        \caption{Ponte H}
+    \end{subfigure}
+    \label{fig:dcmotor_mount}
+    \caption{Peças para proposta da planta}
+\end{figure}
+
+\subsection{Etapas do Projeto}
+
+Para o desenvolvimento do projeto foram propostos as etapas relatadas a seguir. Primeiramente será uma revisão bibliográfica e modelagem da planta e avaliação em ambiente de simulação. Num segunda fase será ajustado o modelo encontrado para o planta real.
+
+\begin{itemize}
+    \item Estudo Planta Simulada
+    \begin{enumerate}
+        \item Revisão Bibliográfica para busca do modelo de um servo motor na literatura
+        \item Simulação do modelo
+        \item Implementação do controle em simulação
+    \end{enumerate}
+    \item Estudo Planta Real
+    \begin{enumerate}
+        \item Simulação da planta no Tinkercad
+        \item Identificação de Parâmetro da Planta
+        \item Simulação da planta a partir do modelo identificado
+        \item Implementação do controle em simulação
+        \item Implementação do controle na planta
+    \end{enumerate}
+\end{itemize}
 
 % ------------------------------------------------------------------------------
 \newpage
@@ -34,8 +83,8 @@
 % para citar sem usar no texto basta usar \nocite{}
 %\nocite{sympy}
 %\nocite{pythontex}
-\nocite{matlabcontrol}
-\nocite{matlabsymbolic}
+%\nocite{matlabcontrol}
+%\nocite{matlabsymbolic}
 \nocite{ogata2010modern}
 
 % ------------------------------------------------------------------------------
@@ -49,13 +98,18 @@
 %\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{python}{../python/exsim6.py}
 
 %\newpage
-\subsection*{Matlab}
+%\subsection*{Matlab}
 
-\subsubsection*{Parte 1}
-Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em conjunto das toolbox \textit{Control System}\cite{matlabcontrol} e \textit{Symbolic Math}\cite{matlabsymbolic}. Segue o código referente usado
+%\subsubsection*{Parte 1}
+%Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em conjunto das toolbox \textit{Control System}\cite{matlabcontrol} e \textit{Symbolic Math}\cite{matlabsymbolic}. Segue o código referente usado
 
-\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/project.m}
+%\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/project.m}
 
+%\newpage
+%\subsection*{Arduino}
+%Para implementação do controlador foi usado o seguinte código
+
+%\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/pid_control/pid_control.ino}
 
 % ------------------------------------------------------------------------------
 \end{document}
