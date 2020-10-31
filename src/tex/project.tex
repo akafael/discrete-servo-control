@@ -1,0 +1,61 @@
+% Pacotes e configurações padrão do estilo ``article''\
+% -------------------------------------
+\documentclass[a4paper,11pt]{article}
+% Layout
+% ------------------------------------------------------------------------------
+\input{relat_layout.tex}
+
+\usepackage{circuitikz}
+
+\title{Projeto} % Define o título do Relatório
+\author{Rafael Lima}
+
+% Definições Auxiliares ( Macros próprias )
+% ------------------------------------------------------------------------------
+%\input{relat_aux.tex} % Arquivo com minhas macros
+\newcommand{\npy}[1]{\sympy{round(#1,4)}}
+% ----------------------------------~>ø<~---------------------------------------
+\begin{document}
+% Capa e Índice ----------------------------------------------------------------
+\input{relat_capa.tex} % Capa para UnB
+% Conteúdo ---------------------------------------------------------------------
+
+\section{Projeto de Controlador no Espaço de Estados}
+
+% ------------------------------------------------------------------------------
+\newpage
+% Referências
+\addcontentsline{toc}{section}{Referências} % Adiciona linha no indice
+\bibliographystyle{abbrv} % Define Estilo e gera bibliografia
+\bibliography{references} % Adiciona Arquivo com Referências
+
+% Acrescentadas no arquivo references.bib
+% para usa-las no texto basta usar \citep{}
+% para citar sem usar no texto basta usar \nocite{}
+%\nocite{sympy}
+%\nocite{pythontex}
+\nocite{matlabcontrol}
+\nocite{matlabsymbolic}
+\nocite{ogata2010modern}
+
+% ------------------------------------------------------------------------------
+%\newpage
+%\section*{Anexos}
+%\addcontentsline{toc}{section}{Anexos} % Adiciona linha no indice
+%\subsection*{Python}
+
+%Para os cálculos e demonstrações foi utilizado o pacote \textit{Python}\TeX\ \cite{pythontex} para o \LaTeX\ em conjunto da bibliteca \textit{sympy}\cite{sympy}. Segue o script completo em python:
+
+%\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{python}{../python/exsim6.py}
+
+%\newpage
+\subsection*{Matlab}
+
+\subsubsection*{Parte 1}
+Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em conjunto das toolbox \textit{Control System}\cite{matlabcontrol} e \textit{Symbolic Math}\cite{matlabsymbolic}. Segue o código referente usado
+
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/project.m}
+
+
+% ------------------------------------------------------------------------------
+\end{document}

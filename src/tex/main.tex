@@ -1,0 +1,45 @@
+% Pacotes e configurações padrão do estilo ``article''\
+% -------------------------------------
+\documentclass[a4paper,11pt]{article}
+% Layout
+% --------------------------------------------------------------------------------
+\input{relat_layout.tex}
+%\usepackage{circuitikz}
+\usepackage[makestderr]{pythontex}
+%\restartpythontexsession{\thesection}
+
+\newcommand{\tituloRelatorio}{Lista 1}
+\title{\tituloRelatorio}
+\hypersetup{pdftitle={\tituloRelatorio}}% title
+\author{Rafael Lima}
+
+% Definições Auxiliares
+% --------------------------------------------------------------------------------
+%\input{relat_aux.tex} % Arquivo com minhas macros
+\renewcommand{\thesection}{Questão \arabic{section}}
+\renewcommand{\thesubsection}{(\alph{subsection})}
+\newcommand{\npy}[1]{\sympy{round(n#1,4)}}
+
+% ----------------------------------~>ø<~---------------------------------------
+\begin{document}
+% Capa e Índice ---------------------------------------------------------------
+\input{relat_capa.tex} % Capa para UnB
+% Conteúdo -------------------------------------------------------------------
+
+\section{}
+
+\begin{equation}
+ \sympy{3} = \sympy{3/4}
+\end{equation}
+
+% ---------------------------------------------------------------------------------------
+
+\bibliographystyle{abbrv}
+\bibliography{references}
+% Referências
+% Acrescentadas no arquivo references.bib
+% para usa-las no texto batsa usar \citep{}
+
+
+% ---------------------------------------------------------------------------------------
+\end{document}
