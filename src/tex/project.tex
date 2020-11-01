@@ -23,9 +23,9 @@
 
 A presente proposta de projeto propõe o desenvolvimento de um sistema de controle discreto para uma planta composta por um motor DC (motor de corrente contínua), um sistema de redução e um sensor encoder de maneira a permitir o controle da posição a partir de um sinal de referência.
 
-O motor de corrente contínua é amplamente utilizado em projetos de eletrônica e sua modelagem também está  
+O motor de corrente contínua é amplamente utilizado em projetos de eletrônica e sua modelagem também está muito bem descrita na literatura de controle em geral. 
 
-Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma planta real. O conjunto de peças foi retirada de um equipamento antigo que havia sido descartado. Para implementação do controle, além da planta será utilizado um Arduino UNO e uma módulo com uma ponte H para o controle de potência conforme mostrado na figura \ref{fig:dcmotor_mount}.
+Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma planta real. O conjunto de peças foi retirada de um equipamento antigo que havia sido descartado. Para implementação do controle, além da planta será utilizado um Arduino UNO e uma módulo com uma ponte H para o controle de potência conforme mostrado na figura \ref{fig:dispositivos}.
 
 \begin{figure}[H]
     \centering
@@ -46,11 +46,35 @@ Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma pla
         \includegraphics[width=0.9\linewidth]{src/tex/img/ponteH.jpg}
         \caption{Ponte H}
     \end{subfigure}
-    \label{fig:dcmotor_mount}
+    \label{fig:dispositivos}
     \caption{Peças para proposta da planta}
 \end{figure}
 
-\subsection{Etapas do Projeto}
+\section{Justificativa}
+
+Sistemas de posicionamento utilizando motores de corrente contínua está presente nos mais variados equipamentos presentes nos dia de hoje. Isso se dá pois eles possuem bom custo benefício, sua implementação e manutenção são facilitadas.
+
+Sua complexidade é razoável para o contexto da disciplina de Controle de Digital pois temos nesse sistema pelo menos dois atrasos nos elementos de atuação e sensoreamento. A caixa de redução por sua vez também insere um aspecto interessante ao processo, visto os efeitos de histerese e zona morta.
+
+Do ponto de vista didático, esse sistema possui bons elementos a serem compreendidos no contexto da disciplina de Controle Digital. Podemos destacar as etapas de modelagem, discretização da planta, alocação de polos no domínio z, projeto em LGR no domínio discreto de um controlador, identificação de sistema e implementação em uma planta real.
+
+Por fim, o controle digital pressupõe um sistema computacional para sua execução, podendo ser operado por um microcontrolador disponível a custo acessível comercialmente. Isso torna esse projeto relevante no contexto das aplicações que utilizam motores de corrente contínua.
+
+
+\section{Objetivos}
+
+Propõe-se a obter nesse projeto os seguintes objetivos:
+
+ \begin{enumerate}
+   \item Obter modelo da planta no domínio da frequência (Motor DC em conjunto com caixa de redução);
+   \item Obter modelo do sensor no domínio da frequência;
+   \item Obter modelos discreto da Planta e do sensor
+   \item Desenvolver modelo em Simulink para o projeto
+   \item Obter controlado descrito através de equações de diferenças;
+   \item Implementação e Validação do controlador em teste em um sistema real;
+ \end{enumerate}
+
+\section{Metodologia de Projeto}
 
 Para o desenvolvimento do projeto foram propostos as etapas relatadas a seguir. Primeiramente será uma revisão bibliográfica e modelagem da planta e avaliação em ambiente de simulação. Num segunda fase será ajustado o modelo encontrado para o planta real.
 
