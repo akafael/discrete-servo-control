@@ -114,7 +114,7 @@ Como forma de prevenir danos as peças, foi utilizado o Tinkercad para simulaç�
 
 Desta forma foi possível avaliar os algoritmos usados para a contagem de passo pelo encoder em conjunto com o acionamento do motor, cálculo do PID e detecção de sentido de rotação. Conforme ilustrado pela figura \ref{fig:pid_tinkercad}, foram utilizados potenciômetros para um ajuste manual e grosseiro dos ganhos do PID. Também foi adotado um display para mostrar os ganhos adotados. Com isto foi possível chegar a uma combinação de ganhos que permitia o motor alcançar o valor da referência ou ao menos parar após um tempo de movimento.
 
-Dado as limitações da plataforma, principalmente nos modelos adotados para o motor e para comportamento das portas e ações do Arduino não foi possível adotar nenhuma forma de identificação dos parâmetros. Concluído o estudo preliminar passamos para experimentos feitos diretamente na planta real.
+Dado as limitações da plataforma, principalmente nos modelos adotados para o motor e para comportamento das portas e ações do Arduíno não foi possível adotar nenhuma forma de identificação dos parâmetros. Concluído o estudo preliminar passamos para experimentos feitos diretamente na planta real.
 
 \subsubsection{Temporização}
 
@@ -122,9 +122,11 @@ Como o estilo de controlador adotado pressupõe uma amostragem fixa, foi necess�
 
 \subsubsection{Leitura Encoder}
 
-O encoder presente na planta escolhida é incremental e com isto foi necessário adicionar ao código no Arduino a contagem de passos a detecção de sentido de rotação. A partir da captura de dados movendo-se manualmente o eixo do motor foi detectado a presença de bastante ruído na leitura. Com isto o contador acabava sendo incrementado ainda que o motor estivesse parado.
+O encoder presente na planta escolhida é incremental e com isto foi necessário adicionar ao código no Arduíno a contagem de passos a detecção de sentido de rotação. A partir da captura de dados movendo-se manualmente o eixo do motor foi detectado a presença de bastante ruído na leitura. Com isto o contador acabava sendo incrementado ainda que o motor estivesse parado.
 
 \subsubsection{Acionamento Motor}
+
+O acionamento do motor foi feito através de uma ponte H. Um fato quer introduz não linearidade ao sistema é a presença de uma zona morta correspondente ao mínimo de tensão necessária para fazer o motor girar partindo do repouso. Para o motor escolhido inicialmente, esta região era muito grande e dado o desgaste interno do motor e com isto a tensão mínima necessária era próxima de 5V, o que inviabilizava qualquer controle pois era o máximo fornecido pela fonte inicial adotada. Para garantir um bom funcionamento é necessário que o motor tenha a capacidade de partir do zero com a menor tensão possível, isto é que a zona morta seja pequena e por conta disto foi necessário a escolha de outro motor.
 
 \section{Conclusão}
 
@@ -170,9 +172,15 @@ Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em c
 Para avaliar o funcionamento do encoder foi usado o seguinte código
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_enconder/test_enconder.ino}
 
+\subsubsection*{Teste Motor}
+Para avaliar o funcionamento do motor foi usado o seguinte código
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor/test_dcmotor.ino}
+
+
 \subsubsection*{Controle}
 Para implementação do controlador foi usado o seguinte código
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/pid_control/pid_control.ino}
 
+% https://www.usinainfo.com.br/drivers-para-motores/driver-ponte-h-ou-motor-de-passo-l298-2302.html
 % ------------------------------------------------------------------------------
 \end{document}
