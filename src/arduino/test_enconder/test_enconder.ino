@@ -53,6 +53,8 @@ void loop(){
       interrupts();
       
       // Serial - Plot Chart
+      Serial.print(millis());
+      Serial.print(" ");
       Serial.println(encoderCountTotal);
     }
 }
