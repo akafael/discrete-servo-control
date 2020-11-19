@@ -122,11 +122,17 @@ Como o estilo de controlador adotado pressupõe uma amostragem fixa, foi necess�
 
 \subsubsection{Leitura Encoder}
 
-O encoder presente na planta escolhida é incremental e com isto foi necessário adicionar ao código no Arduíno a contagem de passos a detecção de sentido de rotação. A partir da captura de dados movendo-se manualmente o eixo do motor foi detectado a presença de bastante ruído na leitura. Com isto o contador acabava sendo incrementado ainda que o motor estivesse parado.
+O encoder presente na planta escolhida é sistema ótico e incremental e com isto foi necessário adicionar ao código no Arduíno a contagem de passos a detecção de sentido de rotação. O sinal do encoder é composto por duas ondas quadradas defasadas em 90 graus. Desta forma, o deslocamento absoluto pode ser obtido através da contagem dos pulsos e o sentido de rotação pela comparação do dois sinais.
+
+% TODO Adicionar Ilustração do sinal do encoder
+
+Como esta variação é relativamente rápida, o sinal de borda de subida do encoder foi associado a uma interrupção no processador. Como efeito a cada vez que é detectado um pulso, o processamento é interrompido e uma função para contagem e detecção da direção é chamada. Desta forma é possível manter o algoritmo de controle em paralelo com a leitura do encoder.
+
+A partir da captura de dados movendo-se manualmente o eixo do motor foi detectado a presença de bastante ruído na leitura. Foi percebido nos primeiros experimentos que contador acabava sendo incrementado ainda que o motor estivesse parado. Para reduzir o ruído algumas medidas foram adotadas: primeiro o sinal de alimentação do encoder foi separado do sinal de alimentação da ponte H, foi adotado um cabo com par trançado como forma de reduzir a interferência devido ao ruído introduzido com o acionamento do motor, a fonte de alimentação do motor e do arduino também foi separada. Com estas medidas, o ruído reduziu bastante.
 
 \subsubsection{Acionamento Motor}
 
-O acionamento do motor foi feito através de uma ponte H. Um fato quer introduz não linearidade ao sistema é a presença de uma zona morta correspondente ao mínimo de tensão necessária para fazer o motor girar partindo do repouso. Para o motor escolhido inicialmente, esta região era muito grande e dado o desgaste interno do motor e com isto a tensão mínima necessária era próxima de 5V, o que inviabilizava qualquer controle pois era o máximo fornecido pela fonte inicial adotada. Para garantir um bom funcionamento é necessário que o motor tenha a capacidade de partir do zero com a menor tensão possível, isto é que a zona morta seja pequena e por conta disto foi necessário a escolha de outro motor.
+O acionamento do motor foi feito através de uma ponte H. Um fator que introduz não linearidade ao sistema é a presença de uma zona morta correspondente ao mínimo de tensão necessária para fazer o motor girar partindo do repouso. Além disto o sistema possui uma limitação de tensão máxima que é capaz de fornecer, o que também impõe um limite a região linear para controle do motor.
 
 \section{Conclusão}
 
@@ -166,16 +172,22 @@ Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em c
 
 \newpage
 \subsection*{Arduino}
- Dado as limitações do Arduino foram produzidos diferentes códigos como forma de avaliar o funcionamento de cada componente de hardware isoladamente.
+Dado as limitações do Arduino foram produzidos diferentes códigos como forma de avaliar o funcionamento de cada componente de hardware isoladamente.
 
+\newpage
 \subsubsection*{Teste Enconder}
 Para avaliar o funcionamento do encoder foi usado o seguinte código
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_enconder/test_enconder.ino}
 
+\newpage
 \subsubsection*{Teste Motor}
 Para avaliar o funcionamento do motor foi usado o seguinte código
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor/test_dcmotor.ino}
 
+\newpage
+\subsubsection*{Teste Motor}
+O código usado para caracterização do sistemae e avaliação do funcionamento conjunto do motor com o encoder foi usado o seguinte:
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor_characterization/test_dcmotor_characterization.ino}
 
 \subsubsection*{Controle}
 Para implementação do controlador foi usado o seguinte código
