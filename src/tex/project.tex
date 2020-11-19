@@ -134,6 +134,17 @@ A partir da captura de dados movendo-se manualmente o eixo do motor foi detectad
 
 O acionamento do motor foi feito através de uma ponte H. Um fator que introduz não linearidade ao sistema é a presença de uma zona morta correspondente ao mínimo de tensão necessária para fazer o motor girar partindo do repouso. Além disto o sistema possui uma limitação de tensão máxima que é capaz de fornecer, o que também impõe um limite a região linear para controle do motor.
 
+\subsection{Caracterização Sistema}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/full_system.jpg}
+    \caption{Planta Montada}
+    \label{fig:pid_tinkercad}
+\end{figure}
+
+
+
 \section{Conclusão}
 
 % ------------------------------------------------------------------------------
@@ -174,8 +185,7 @@ Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em c
 \subsection*{Arduino}
 Dado as limitações do Arduino foram produzidos diferentes códigos como forma de avaliar o funcionamento de cada componente de hardware isoladamente.
 
-\newpage
-\subsubsection*{Teste Enconder}
+\subsubsection*{Teste Encoder}
 Para avaliar o funcionamento do encoder foi usado o seguinte código
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_enconder/test_enconder.ino}
 
@@ -189,6 +199,7 @@ Para avaliar o funcionamento do motor foi usado o seguinte código
 O código usado para caracterização do sistemae e avaliação do funcionamento conjunto do motor com o encoder foi usado o seguinte:
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor_characterization/test_dcmotor_characterization.ino}
 
+\newpage
 \subsubsection*{Controle}
 Para implementação do controlador foi usado o seguinte código
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/pid_control/pid_control.ino}
