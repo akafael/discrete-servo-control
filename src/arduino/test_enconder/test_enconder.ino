@@ -42,7 +42,7 @@ void setup() {
 
 void loop(){
     // Control Loop Frequency Time
-    if(millis() > lastTime + periodTime)
+    if(millis() >= lastTime + periodTime)
     {
       lastTime = millis(); // Reset Timer
       
