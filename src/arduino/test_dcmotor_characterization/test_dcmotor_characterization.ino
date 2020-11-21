@@ -10,7 +10,7 @@
 
 elapsedMillis timerGlobal;
 elapsedMillis timerLoop;
-const int timeStep = 100; // ms
+const int timeStep = 60; // ms
 
 // Motor
 int speedMotor,speedStep;
@@ -40,6 +40,8 @@ void setup() {
   // Attach Interrupt signal to Encoder PIN
   attachInterrupt(digitalPinToInterrupt(PINENCODER_A), isrCount, RISING); 
 
+  speedStep = 1;
+
   timerGlobal = 0;
 }
 
@@ -56,18 +58,40 @@ void loop() {
     interrupts();
 
     // Control Signal
-    speedStep = (speedMotor >=255)?-1:(speedMotor < 10) ?1:speedStep;
+    if ( speedMotor >= 255 )
+    {
+      speedStep = -1;
+    }
+    else if ( speedMotor <= -255 )
+    {
+      speedStep = 1;
+    }
     speedMotor += speedStep;
 
-    // Set Motor Speed
-    analogWrite(PINMOTOR1,0);
-    analogWrite(PINMOTOR2,speedMotor);
+
+    if ( speedMotor > 0)
+    {
+      // Set Motor Speed
+      digitalWrite(PINMOTOR1,LOW);
+      analogWrite(PINMOTOR2,speedMotor);
+    }
+    else if ( speedMotor < 0 )
+    {
+      // Set Motor Speed
+      analogWrite(PINMOTOR1,-speedMotor);
+      digitalWrite(PINMOTOR2,LOW);
+    }
+    else
+    {
+      digitalWrite(PINMOTOR1,LOW);
+      digitalWrite(PINMOTOR2,LOW);
+    }
 
     // Output
     Serial.print(timerGlobal);
-    Serial.print(" ");
+    Serial.print(",");
     Serial.print(encoderCountTotal);
-    Serial.print(" ");
+    Serial.print(",");
     Serial.println(speedMotor);
   }
 }
