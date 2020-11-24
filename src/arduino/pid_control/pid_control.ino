@@ -3,8 +3,8 @@
  */
 
 #define PWM_PIN  5
-#define MOTOR_EN1_PIN  12
-#define MOTOR_EN2_PIN  11
+#define MOTOR_EN1_PIN  6
+#define MOTOR_EN2_PIN  5
 #define encoder0PinA 3
 #define encoder0PinB 2
 

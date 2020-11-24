@@ -1,7 +1,7 @@
 %%
 
-port = "/dev/ttyACM0"
-buffersize = 3000;
+port = "/dev/ttyACM2"
+buffersize = 100;
 data = plotArduino(port,buffersize)
 
 fileID = fopen(['expdata_',datestr(now,'yyyy11dd_HHMMSS'),'.csv'],'w');

@@ -10,8 +10,6 @@ function x = plotArduino(port,buffersize)
     x = zeros(buffersize,3);
     i = 1;
 
-    axisPlot = axes()
-
     while ((~isempty(serialPort)) && strcmp(serialPort.Status,'open') && i <= buffersize)
         % Read Data
         str = fgetl(serialPort);
