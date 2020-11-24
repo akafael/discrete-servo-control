@@ -143,9 +143,98 @@ O acionamento do motor foi feito através de uma ponte H. Um fator que introduz 
     \label{fig:pid_tinkercad}
 \end{figure}
 
+\subsubsection{Região Não Linear}
 
+Idealmente o comportamento poderia ser representado através de um modelo linear para todas as condições de operação, No entanto, na prática devido as características do hardware, temos uma região de operação a qual o modelo pode ser utilizado delimitada por uma região inferior e superior.
+
+Para o motor começar a se mover é preciso fornecer um mínimo de energia. Esta quantidade varia de acordo com as características eletromecânicas do motor. Em particular para o motor utilizado, a faixa de operação é de 3V a 6V, sendo 3V o mínimo para fazer o motor girar e 6V uma tensão máxima para não danificar.
+
+A conversão do sinal de controle do Arduino em um sinal de potência foi feita através uma ponte H em conjunto com um sinal PWM. Como efeito a tensão de alimentação da fonte utilizada para o motor foi amostrada usando 8 bits. Desta forma, chegar ao valor teórico correspondente a zona morta do motor para uma alimentação de 5V basta 
+
+$$
+D_{min} = \frac{3V}{V_{fonte}}(2^8 -1) = \frac{3*255}{5} = 153
+$$
+
+Como forma de obter este valor experimentalmente foi feito um programa aplicando um sinal de entrada de dente de serra. Isto é o valor de referência passado para a tensão do motor foi gradualmente aumentado e em seguida reduzido. Os valores obtidos foram registrados a partir do Matlab através da conexão Serial com o Arduino.
+
+Mesmo que frequência interna do Arduino seja próximo de $14 MHz$, as operações de comunicação via Serial são bastante dispendiosas. Por conta disto, o menor período conseguido experimentalmente a qual é mantida um a operação com ciclo em tempo contante foi de $60ms$. Para períodos menores que este valor, o tempo gasto com a comunicação serial, cálculos e as interrupções do encoder acabava sendo maior que o período e as garantias de funcionamento em tempo real eram perdidas.
+
+\subsubsection{Identificação de Parâmetros}
+
+Uma vez definido uma região linear de operação foi adotado o procedimento de identificação do sistema. Pelas especificação do fabricante temos
+
+\begin{table}[H]
+    $$
+    \begin{array}{ccc}
+         \hline
+         V_i\ [V] & \dot{\theta}\ [RPM] & \dot{\theta}\ [Hz]\\
+         \hline
+         3 & 3000 & 50 \\
+         6 & 6000 & 60 \\
+         \hline
+    \end{array}
+    $$
+    \caption{Velocidade de operação sem carga}
+    \label{tab:dcmotor_speed}
+\end{table}
+
+De forma que poderíamos adotar como uma aproximação razoável do comportamento dinâmico do motor como uma função de transferência de primeira ordem na forma
+
+\begin{equation}
+    G_m(s) = \frac{\beta}{\alpha s + 1}
+\end{equation}
+
+Neste sistema temos apenas a medida da posição através do encoder. Este processo é feito através do conjunto de várias etapas, incluindo amostragem através da contagem do pulsos e a discretização referente ao instante de contabilização da leitura do encoder. No entanto, dado a grande diferença entre o tempo gasto neste processo com o tempo gasto na comunicação serial, podemos aproximar o sistema de medição de posição apenas como um ganho.
+
+Feito as devidas considerações, a planta sem controlador pode ser representada da seguinte forma
+
+%% TODO Acrescentar diagrama de blocos do sistema em malha aberta ( ZOH + Planta de 1 ordem + integrador  + ganho)
+
+Aplicando a transformada Z podemos representar o sistema em tempo discreto pela seguinte função:
+
+\begin{equation}\label{eq:gz_general}
+    G(z) = \frac{Y(z)}{U(z)} = \frac{\beta_1 z + \beta_2}{z^2 + \alpha_1 z + \alpha_2}
+\end{equation}
+
+Do que podemos observar que a discretização traz como efeitos tanto o deslocamento dos polos, como também a inclusão de um zero na planta.
+
+A partir da função \ref{eq:gz_general} podemos obter a representação do sistema a partir de equação de diferenças como:
+$$
+Y z^2
+$$
+
+\begin{equation}\label{eq:gz_general}
+  Y[k+2] = -Y[k+1]\alpha_1 - Y[k]\alpha_2 + U[k+1]\beta_1 + U[k]\beta_2
+\end{equation}
+
+A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear.
+
+%% TODO Colocar resultado regressão linear do matlab
+
+\subsection{Controlador}
+
+\subsubsection{Definição Requisitos}
+
+Obviamente o melhor desempenho do controlador será algo dentro dos limites físicos do dispositivos envolvidos. No que inclui, a taxa de variação da posição angular não pode ser maior que $50Hz$, a precisão está bastante limitada as taxas de amostragem de 8 bits do Arduino e quantidade de buracos do disco do encoder. Tendo isto em mente foi definido como requisitos desejaveis para um controlar PID implementado em Arduino:
+
+$$ Taxa de amortecimento
+$$
+
+\subsubsection{Cálculo dos Parâmetros do Controlador}
+
+%% Simulação
+
+\subsubsection{Validação em Simulação}
+
+%\subsubsection{Validação na planta}
 
 \section{Conclusão}
+
+A implementação de um sistema de controle de posição a partir de Arduino trouxe vários desafios. Preparar um hardware e garantir as mínimas condições de operação em tempo real para os controladores acabou tomando mais tempo que o previsto. Durante o processo alguns motores foram danificados e também houve perda de um encoder, porém tal representou uma excelente oportunidade de aprendizado tanto em como lidar com as características de cada dispositivo usado como também permitir uma compreensão melhor da teoria de controle.
+
+Como abordagem principal, tanto na escolha do tema dos métodos utilizados foi buscado a todo momento a integração dos conhecimentos desenvolvidos da teoria de controle de sistema a tempo discreto em conjunto os campos de programação de microcontroladores, instrumentação digital e programação em tempo real. Esta abordagem trouxe seus ônus por acrescentar etapas no projeto além da simulação pura de um sistema físico idealizado, mas contribuiu bastante no melhor entendimento do impacto das características físicas e tipos de ruídos associados de cada parte no sistema de controle.
+
+%% TODO Comentar sobre os resultados do controlador
 
 % ------------------------------------------------------------------------------
 \newpage
