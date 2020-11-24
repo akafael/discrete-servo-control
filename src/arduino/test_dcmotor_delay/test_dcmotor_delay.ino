@@ -10,10 +10,11 @@
 
 elapsedMillis timerGlobal;
 elapsedMillis timerLoop;
-const int timeStep = 100; // ms
+elapsedMillis timerMotorOn;
+const int timeStep = 60; // ms
+const int timeMotorOn = 10*timeStep; // ms
 
-// Motor
-unsigned int count;
+bool isMotorON = false;
 
 // Encoder
 volatile long  encoderCount = 0;
@@ -40,8 +41,7 @@ void setup() {
   // Attach Interrupt signal to Encoder PIN
   attachInterrupt(digitalPinToInterrupt(PINENCODER_A), isrCount, RISING); 
 
-  count = 0;
-
+  timerMotorOn = 0;
   timerGlobal = 0;
 }
 
@@ -57,16 +57,15 @@ void loop() {
     encoderCount = 0;
     interrupts();
 
-    count = (count + 1 ) & 3;
+    if (timerMotorOn >= timeMotorOn )
+    {
+      timerMotorOn = 0;
+      isMotorON = !isMotorON;
+    }
 
-    if ( count == 1 )
+    if ( isMotorON )
     {
       // Set Motor Speed
-      digitalWrite(PINMOTOR1,LOW);
-      digitalWrite(PINMOTOR2,HIGH);
-    }
-    else if ( count == 3 )
-    {
       digitalWrite(PINMOTOR2,LOW);
       digitalWrite(PINMOTOR1,HIGH);
     }
@@ -81,7 +80,7 @@ void loop() {
     Serial.print(",");
     Serial.print(encoderCountTotal);
     Serial.print(",");
-    Serial.println( count );
+    Serial.println( isMotorON );
   }
 }
 
