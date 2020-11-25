@@ -21,7 +21,7 @@
 
 \section{Introdução}
 
-A presente proposta de projeto propõe o desenvolvimento de um sistema de controle discreto para uma planta composta por um motor DC (motor de corrente contínua), um sistema de redução e um sensor encoder de maneira a permitir o controle da posição a partir de um sinal de referência.
+O presente trabalho discorre sobre o desenvolvimento de um sistema de controle discreto para uma planta composta por um motor DC (motor de corrente contínua), um sistema de redução e um sensor encoder de maneira a permitir o controle da posição a partir de um sinal de referência.
 
 O motor de corrente contínua é amplamente utilizado em projetos de eletrônica e sua modelagem também está muito bem descrita na literatura de controle em geral. 
 
@@ -59,7 +59,6 @@ Sua complexidade é razoável para o contexto da disciplina de Controle de Digit
 Do ponto de vista didático, esse sistema possui bons elementos a serem compreendidos no contexto da disciplina de Controle Digital. Podemos destacar as etapas de modelagem, discretização da planta, alocação de polos no domínio Z, projeto em LGR no domínio discreto de um controlador, identificação de sistema e implementação em uma planta real.
 
 Por fim, o controle digital pressupõe um sistema computacional para sua execução, podendo ser operado por um microcontrolador disponível a custo acessível comercialmente. Isso torna esse projeto relevante no contexto das aplicações que utilizam motores de corrente contínua.
-
 
 \section{Objetivos}
 
@@ -159,6 +158,8 @@ Como forma de obter este valor experimentalmente foi feito um programa aplicando
 
 Mesmo que frequência interna do Arduino seja próximo de $14 MHz$, as operações de comunicação via Serial são bastante dispendiosas. Por conta disto, o menor período conseguido experimentalmente a qual é mantida um a operação com ciclo em tempo contante foi de $60ms$. Para períodos menores que este valor, o tempo gasto com a comunicação serial, cálculos e as interrupções do encoder acabava sendo maior que o período e as garantias de funcionamento em tempo real eram perdidas.
 
+%% TODO Adicionar Gráfico Leitura Arduino onda Dente de Serra
+
 \subsubsection{Identificação de Parâmetros}
 
 Uma vez definido uma região linear de operação foi adotado o procedimento de identificação do sistema. Pelas especificação do fabricante temos
@@ -224,11 +225,17 @@ $A = \left[\begin{array}{cccc}
  -Y[k+1] & -Y[k] & U[k+1] & U[k]
 \end{array}\right]$.
 
-Com auxílio do Matlab (código em anexo) foi obtido a seguinte função de transferência:
+Para obter uma melhor caracterização foi gerado um sinal formado por pulsos de tamanhos e durações variadas diretamente no Arduino. % Conforme mostrado na figura \ref{}
+
+%% TODO Adicionar Gráfico Leitura Arduino onda pulsos
+
+Os dados do tempo, leitura do encoder e sinal de referência foram então enviados para o computador através de comunicação serial e com auxílio do Matlab (código em anexo) foi obtido a seguinte função de transferência:
 
 \begin{equation}
 G(z) = \frac{Y(z)}{U(z)} = \frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}
 \end{equation}
+
+Onde o período de amostragem é de $T = 0.1s$
 
 \subsection{Controlador}
 
@@ -245,7 +252,13 @@ Obviamente o melhor desempenho do controlador será algo dentro dos limites fís
 
 \subsubsection{Validação em Simulação}
 
+%% TODO Sugestão: Comentar sobre Validação Cruzada: aplicar um sinal de entrada na porção dos dados que não foi utilizada para obter a função de transferência e compara com resultado experimental
+
+%% TODO Montar Planta no Simulink
+
 %\subsubsection{Validação na planta}
+
+%% TODO Montar um controle proporcional básico na planta
 
 \section{Conclusão}
 
