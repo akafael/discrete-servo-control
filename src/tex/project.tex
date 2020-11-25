@@ -50,7 +50,7 @@ Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma pla
     \label{fig:dispositivos}
 \end{figure}
 
-\section{Justificativa}
+\subsection{Justificativa}
 
 Sistemas de posicionamento utilizando motores de corrente contínua está presente nos mais variados equipamentos presentes nos dia de hoje. Isso se dá pois eles possuem bom custo benefício, sua implementação e manutenção são facilitadas.
 
@@ -224,13 +224,11 @@ $A = \left[\begin{array}{cccc}
  -Y[k+1] & -Y[k] & U[k+1] & U[k]
 \end{array}\right]$.
 
-Com auxílio do matlab foi obtido a seguinte função de transferência:
+Com auxílio do Matlab (código em anexo) foi obtido a seguinte função de transferência:
 
 \begin{equation}
 G(z) = \frac{Y(z)}{U(z)} = \frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}
 \end{equation}
-
-%% TODO Colocar resultado regressão linear do matlab
 
 \subsection{Controlador}
 
@@ -290,6 +288,14 @@ Como abordagem principal, tanto na escolha do tema dos métodos utilizados foi b
 Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em conjunto das toolbox \textit{Control System}\cite{matlabcontrol} e \textit{Symbolic Math}\cite{matlabsymbolic}. Segue o código referente usado
 
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/project.m}
+
+\newpage
+\subsubsection*{Leitura dados Arduino}
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/plotArduino.m}
+
+\newpage
+\subsubsection*{Identificação de Parâmetros}
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/identification.m}
 
 \newpage
 \subsection*{Arduino}
