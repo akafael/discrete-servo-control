@@ -207,7 +207,28 @@ $$
   Y[k+2] = -Y[k+1]\alpha_1 - Y[k]\alpha_2 + U[k+1]\beta_1 + U[k]\beta_2
 \end{equation}
 
-A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear.
+Tomando um conjunto maior de dados podemos reescrever a equação na forma matricial como
+
+\begin{equation}\label{eq:gz_general}
+  Y[k+2] = 
+  \left( \begin{array}{cccc}
+  -Y[k+1] & -Y[k] & U[k+1] & U[k]
+  \end{array} \right)
+  \left(\begin{array}{c}
+    \alpha_1\\ \alpha_2 \\ \beta_1 \\ \beta_2
+  \end{array}\right)
+\end{equation}
+
+A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear. Supondo 
+$A = \left[\begin{array}{cccc}
+ -Y[k+1] & -Y[k] & U[k+1] & U[k]
+\end{array}\right]$.
+
+Com auxílio do matlab foi obtido a seguinte função de transferência:
+
+\begin{equation}
+G(z) = \frac{Y(z)}{U(z)} = \frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}
+\end{equation}
 
 %% TODO Colocar resultado regressão linear do matlab
 
@@ -215,10 +236,10 @@ A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do 
 
 \subsubsection{Definição Requisitos}
 
-Obviamente o melhor desempenho do controlador será algo dentro dos limites físicos do dispositivos envolvidos. No que inclui, a taxa de variação da posição angular não pode ser maior que $50Hz$, a precisão está bastante limitada as taxas de amostragem de 8 bits do Arduino e quantidade de buracos do disco do encoder. Tendo isto em mente foi definido como requisitos desejaveis para um controlar PID implementado em Arduino:
+Obviamente o melhor desempenho do controlador será algo dentro dos limites físicos do dispositivos envolvidos. No que inclui, a taxa de variação da posição angular não pode ser maior que $50Hz$, a precisão está bastante limitada as taxas de amostragem de 8 bits do Arduino e quantidade de buracos do disco do encoder. Tendo isto em mente foi definido como requisitos desejáveis para um controlar PID implementado em Arduino:
 
-$$ Taxa de amortecimento
-$$
+%%$$ Taxa de amortecimento
+
 
 \subsubsection{Cálculo dos Parâmetros do Controlador}
 
