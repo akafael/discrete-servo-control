@@ -8,7 +8,7 @@
 #define PINENCODER_A 2
 #define PINENCODER_B 3
 
-#define DEADZONE 150
+#define DEADZONE 180
 
 elapsedMillis timerGlobal;
 elapsedMillis timerLoop;
@@ -68,7 +68,7 @@ void loop() {
       isMotorON = !isMotorON;
       counter = (counter + 1) & 15;
       speed = counter*stepSpeed + DEADZONE;
-      timeMotorOn = (20-counter)*timeStep;
+      timeMotorOn = (25-counter)*timeStep;
     }
 
     if ( isMotorON )
