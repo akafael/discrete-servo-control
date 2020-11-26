@@ -10,10 +10,12 @@ fileID = fopen(filename,'r')
 fgets(fileID)
 data = transpose(fscanf(fileID,"%d,%d,%d",[3 Inf]))
 
+deadzone = 125
+
 % Split data into column vectors
 t = data(:,1)
 y = data(:,2)
-u = data(:,3)
+u = data(:,3) - (data(:,3) > 0)*deadzone
 
 % Find Period
 Ts = mean(diff(data(:,1)))/1000
@@ -24,9 +26,12 @@ A = [-y(k+1) -y(k) u(k+1) u(k)];
 coeff = inv(A'*A)*A'*y(k+2)
 
 % Symbolic Discrete Transfer Function
+syms z
 num = vpa(poly2sym(coeff(3:4)',z),4);
 den = vpa(poly2sym([1 coeff(1:2)'],z),4);
-sGz = num/den
+sGz = vpa(num/den,4)
 
 %  Discrete Transfer Function
 Gz = tf(coeff(3:4)',[1 coeff(1:2)'],Ts)
+
+Gz2 = zpk(Gz)

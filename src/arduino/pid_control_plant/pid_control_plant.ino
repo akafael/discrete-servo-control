@@ -16,7 +16,7 @@
 
 #define ERRO_MIN 5
 
-#define DEADZONE 125
+#define DEADZONE 130
 
 // Encoder
 volatile long  encoderCount = 0;
