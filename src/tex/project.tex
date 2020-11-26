@@ -6,6 +6,7 @@
 \input{relat_layout.tex}
 
 %\usepackage{circuitikz}
+\usepackage[clean]{svg}
 
 \title{Proposta de projeto - Controle discreto de um motor DC} % Define o título do Relatório
 \author{Rafael Lima}
@@ -21,11 +22,7 @@
 
 \section{Introdução}
 
-O presente trabalho discorre sobre o desenvolvimento de um sistema de controle discreto para uma planta composta por um motor DC (motor de corrente contínua), um sistema de redução e um sensor encoder de maneira a permitir o controle da posição a partir de um sinal de referência.
-
-O motor de corrente contínua é amplamente utilizado em projetos de eletrônica e sua modelagem também está muito bem descrita na literatura de controle em geral. 
-
-Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma planta real. O conjunto de peças foi retirada de um equipamento antigo que havia sido descartado. Para implementação do controle, além da planta será utilizado um Arduino UNO e uma módulo com uma ponte H para o controle de potência conforme mostrado na figura \ref{fig:dispositivos}.
+O presente trabalho discorre sobre o desenvolvimento de um servo mecanismo a partir de técnicas de controle discreto com base em uma planta composta por um motor DC (motor de corrente contínua), um sistema de redução e um sensor encoder de maneira a permitir o controle da posição a partir de um sinal de referência. O conjunto de peças foi retirada de um equipamento antigo que havia sido descartado. Para implementação do controle, além da planta foi utilizado um Arduino UNO e uma módulo com uma ponte H para o controle de potência conforme mostrado na figura \ref{fig:dispositivos}.
 
 \begin{figure}[H]
     \centering
@@ -52,7 +49,7 @@ Pretende-se aplicar ao fim do desenvolvimento o controlador projetado em uma pla
 
 \subsection{Justificativa}
 
-Sistemas de posicionamento utilizando motores de corrente contínua está presente nos mais variados equipamentos presentes nos dia de hoje. Isso se dá pois eles possuem bom custo benefício, sua implementação e manutenção são facilitadas.
+Sistemas de posicionamento utilizando motores de corrente contínua está presente nos mais variados equipamentos presentes nos dia de hoje. Isso se dá pois eles possuem bom custo benefício, 
 
 Sua complexidade é razoável para o contexto da disciplina de Controle de Digital pois temos nesse sistema pelo menos dois atrasos nos elementos de atuação e sensoreamento. A caixa de redução por sua vez também insere um aspecto interessante ao processo, visto os efeitos de histerese e zona morta.
 
@@ -60,25 +57,25 @@ Do ponto de vista didático, esse sistema possui bons elementos a serem compreen
 
 Por fim, o controle digital pressupõe um sistema computacional para sua execução, podendo ser operado por um microcontrolador disponível a custo acessível comercialmente. Isso torna esse projeto relevante no contexto das aplicações que utilizam motores de corrente contínua.
 
-\section{Objetivos}
+\subsection{Objetivos}
 
-Propõe-se a obter nesse projeto os seguintes objetivos:
+Este projeto têm seguintes objetivos:
 
  \begin{enumerate}
    \item Obter modelo da planta no domínio da frequência (Motor DC em conjunto com caixa de redução);
    \item Obter modelo do sensor no domínio da frequência;
-   \item Obter modelos discreto da Planta e do sensor
+   \item Obter modelos discreto da planta em conjunto com o sensor
    \item Desenvolver modelo em \textit{Simulink} para o projeto
    \item Obter controlado descrito através de equações de diferenças;
-   \item Implementação e Validação do controlador em teste em um sistema real;
+   \item Implementação e Validação do controlador em teste no sistema real;
  \end{enumerate}
 
-\section{Metodologia de Projeto}
+\subsection{Metodologia de Projeto}
 
-Para o desenvolvimento do projeto foram propostos as etapas relatadas a seguir. Primeiramente será uma revisão bibliográfica e modelagem da planta e avaliação em ambiente de simulação. Num segunda fase será ajustado o modelo encontrado para o planta real.
+Para o desenvolvimento do projeto foi feito a partir das etapas relatadas a seguir. Primeiramente foi feito uma revisão bibliográfica e modelagem da planta e avaliação em ambiente de simulação. Num segunda fase foi ajustado o modelo encontrado para o planta real.
 
 \begin{itemize}
-    \item Estudo Planta Simulada
+    \item Estudo Planta em Simulação
     \begin{enumerate}
         \item Revisão Bibliográfica para busca do modelo de um servo motor na literatura
         \item Simulação do modelo
@@ -96,9 +93,11 @@ Para o desenvolvimento do projeto foram propostos as etapas relatadas a seguir. 
 
 \section{Desenvolvimento}
 
+As etapas de desenvolvimento foram feitas em 3 fases. Primeiramente foi feito um estudo e caracterização de cada um dos componentes, depois foram feitos vários visando a identificação do modelo da planta bem como suas propriedades do ponto de vista de controle. Por fim a partir dos dados obtidos experimentalmente foi desenvolvido um controlador que pudesse permitir o funcionamento do sistema a partir dos requisitos desejados.
+
 \subsection{Implementação em Hardware}
 
-Para garantir os requisitos necessários para a implementação do controlador em tempo discreto foi necessário implementar algumas funcionalidades do zero. Inicialmente tudo foi implementado no Tinkercad e posteriormente foi adotado o estudo direto na planta.
+Para garantir os requisitos necessários para a implementação do controlador em tempo discreto foi necessário implementar algumas funcionalidades do zero. Inicialmente tudo foi implementado no \textit{Tinkercad} e posteriormente foi adotado o estudo direto na planta.
 
 \subsubsection{Simulação no Tinkercad}
 
@@ -200,9 +199,9 @@ Aplicando a transformada Z podemos representar o sistema em tempo discreto pela 
 Do que podemos observar que a discretização traz como efeitos tanto o deslocamento dos polos, como também a inclusão de um zero na planta.
 
 A partir da função \ref{eq:gz_general} podemos obter a representação do sistema a partir de equação de diferenças como:
-$$
-Y z^2
-$$
+% $$
+% Y z^2
+% $$
 
 \begin{equation}\label{eq:gz_general}
   Y[k+2] = -Y[k+1]\alpha_1 - Y[k]\alpha_2 + U[k+1]\beta_1 + U[k]\beta_2
@@ -220,12 +219,7 @@ Tomando um conjunto maior de dados podemos reescrever a equação na forma matri
   \end{array}\right)
 \end{equation}
 
-A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear. Supondo 
-$A = \left[\begin{array}{cccc}
- -Y[k+1] & -Y[k] & U[k+1] & U[k]
-\end{array}\right]$.
-
-Para obter uma melhor caracterização foi gerado um sinal formado por pulsos de tamanhos e durações variadas diretamente no Arduino. % Conforme mostrado na figura \ref{}
+A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear. Para obter uma melhor caracterização foi gerado um sinal formado por pulsos de tamanhos e durações variadas diretamente no Arduino. % Conforme mostrado na figura \ref{}
 
 %% TODO Adicionar Gráfico Leitura Arduino onda pulsos
 
@@ -233,24 +227,194 @@ Os dados do tempo, leitura do encoder e sinal de referência foram então enviad
 
 \begin{equation}
 G(z) = \frac{Y(z)}{U(z)} = \frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}
+\label{transfdisc}
 \end{equation}
 
 Onde o período de amostragem é de $T = 0.1s$
 
 \subsection{Controlador}
 
+A planta escolhida para esse trabalho é um dispositivo tipicamente utilizado para posicionamento de cartuchos de impressoras e scanners. Esse equipamentos não tem requisitos tão rígidos quanto velocidade como servos motores de aeromodelos e possuem baixa tolerância para grandes valores de sobressinal. 
+
 \subsubsection{Definição Requisitos}
 
-Obviamente o melhor desempenho do controlador será algo dentro dos limites físicos do dispositivos envolvidos. No que inclui, a taxa de variação da posição angular não pode ser maior que $50Hz$, a precisão está bastante limitada as taxas de amostragem de 8 bits do Arduino e quantidade de buracos do disco do encoder. Tendo isto em mente foi definido como requisitos desejáveis para um controlar PID implementado em Arduino:
+O desempenho do controlador será algo dentro dos limites físicos dos dispositivos envolvidos. No que inclui, a taxa de variação da posição angular não pode ser maior que $10Hz$, a precisão está bastante limitada as taxas de amostragem de 8 bits do Arduino e quantidade de buracos do disco do encoder. Tendo isto em mente foi definido como requisitos para o sistema:
+
+
+\begin{itemize}
+   \item Overshoot <= 16 \%;
+   \item Tempo de assentamento para entrada degrau: 1 s;
+ \end{itemize}
+
+\subsection{Primeira proposta de controlador}
+
+O primeiro controlador tem seu projeto feito pelo LGR (Lugar Geométrico das Raízes). Analisa-se o LGR da planta discretizada no plano imaginário Z. Para o requisito de overshoot, procura-se um ponto no LGR em que o fator de amortecimento esteja entre o intervalo de 0.5 e 0.7, visto a seguinte relação em \ref{UP}:
+
+\begin{equation}
+\zeta=\frac{-\ln \left(P O\% / 100\right)}{\sqrt{\pi^{2}+\ln ^{2}\left(P O\% / 100\right)}}
+\label{UP}
+\end{equation}
+
+Nesse primeiro momento procura-se atender apenas um dos objetivos, tendo como objetivo final dessa etapa encontrar um ganho dentro do LGR da planta que atenda o requisito. 
+
+Em momento posterior, analisa-se a resposta ao degrau em malha fechada do sistema para observar se o requisito de tempo de assentamento também foi alcançado utilizando apenas essa proposta. 
+
+As etapas desta análise seguem na sequência a seguir:
+
+\begin{enumerate}
+   \item Dispor pólos e zeros da planta no plano imaginário;
+   \item Obter o LGR da planta no espaço Z;
+   \item Delimitar conjunto de pontos no plano imaginário que corresponde a fator de amortecimento de 0.7;
+   \item Determinar ponto de intersecção do LGR com a linha do conjunto de dados de fator de amortecimento;
+ \end{enumerate}
+
+Utilizando-se a função rlocus do Matlab (Função que gera o lugar da Raízes de uma função de transferência) e a função zgrid (que plota a área do plano Z no plano imaginário), presentes no Matlab, temos na figura \ref{fig:lgr} o LGR da função de transferência da planta discretizada em \ref{transfdisc}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/rlocus.PNG}
+    \caption{LGR da planta}
+    \label{fig:lgr}
+\end{figure}
+
+Observa-se que o ganho para a obtenção do comportamento deseja do sistema é de 0.234. Para validação desse resultado, simulou-se o sistema em malha fechado no Simulink com segue na figura \ref{fig:controle1}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/controle_1.PNG}
+    \caption{Diagrama da proposta 1 de controle}
+    \label{fig:controle1}
+\end{figure}
+
+Os resultados obtidos estão dispostos a seguir nas figuras \ref{fig:saidactrl1} e \ref{fig:saidactrl1up}: 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/saida_controle_1.png}
+    \caption{Gráfico da saída da proposta 1 de controle}
+    \label{fig:saidactrl1}
+\end{figure}
+
+Observa-se que o requisito de overshoot foi alcançado. Na gráfico da figura \ref{fig:saidactrl1up} foi aumentado a escala do gráfico a fim de ser mais preciso quanto a essa análise. O overshoot é aproximadamente de 5 \% com valores abaixo desse valor para o trecho em que o sinal já está estabilizado em 1.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/saida_controle1_up.PNG}
+    \caption{Aumento de escala para observação do overshoot da proposta 1 de controle}
+    \label{fig:saidactrl1up}
+\end{figure}
+
+ Entretanto, o tempo de assentamento é maior que 2 segundos, mais que o dobro do tempo de assentamento do requisito de projeto. Por esse motivo, propõe-se um segundo tipo de proposta de projeto. 
+
+\subsection{Segunda proposta de controlador}
+
+Nessa abordagem iremos utilizar o Diagrama de Bode. O objetivo é atender os dois requisitos realizando um compensador em avanço. Para isso, iremos realizar a transformada inversa de Z sobre a função de transferência discretizada, obtendo sua versão no domínio da frequência, como se segue em \ref{equacao_s}:
+
+\begin{equation}
+G(s) = \frac{0.5011(s+70.0259)}{(s+0.00058419)(s+4.19042)}
+\label{equacao_s}
+\end{equation}
+
+Utiliza-se a estratégia de anular o polo de 4.19042 da planta e adicionar um outro polo. A escolha do novo polo irá seguir a relação \ref{assentamento_eq}:
+
+\begin{equation}
+\zeta \omega_{n}=\frac{4}{T_{s}}
+\label{assentamento_eq}
+\end{equation}
+
+
+
+Como se quer tempo de assentamento de 1 segundo, utiliza-se um fator de amortecimento menor sem deixar de se observar overshoot. A escolha então será de fator de amortecimento de 0.5. Tem-se então que a frequência natural para o caso é de \textbf{8 radianos por segundos}. O controlador tem a seguinte lei do formação \ref{novogc}:
+
+\begin{equation}
+G_{c}(s)=\frac{s+4.19042}{s+8}
+\label{novogc}
+\end{equation}
+
+Plota-se então o Diagrama de BODE da planta para realizar a compensação de ganho devido ao avanço do novo controlador. Analisa-se que em próximo ao polo que é anulado na planta, o ganho é de 3.46 dB.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/bode.PNG}
+    \caption{Diagrama da primeira proposta de controle}
+    \label{fig:lgr}
+\end{figure}
+
+O controlador final fica então com a seguinte configuração (\ref{novogcz}):
+
+\begin{equation}
+G_{c}(z)=3.46\frac{s - 0.7116}{z - 0.4493}
+\label{novogcz}
+\end{equation}
+
+Implementa-se então o controlador em Simulink a fim de avaliar o alcance dos requisitos, como segue na figura \ref{fig:projetoavanco}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/controle_2.PNG}
+    \caption{Diagrama da segunda proposta de controle}
+    \label{fig:projetoavanco}
+\end{figure}
+
+Observa-se na figura \ref{fig:degrauavanco} que o requisito tempo de assentamento de 1 segundo é alcançado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/saida_controle_2.png}
+    \caption{Resposta ao degrau da segunda proposta de controle}
+    \label{fig:degrauavanco}
+\end{figure}
+
+O overshoot por sua vez fica abaixo de 5 \%, e esse requisito também é resolvido.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/saida_controle_2_up.PNG}
+    \caption{Overshoot da segunda proposta de controle}
+    \label{fig:lgr}
+\end{figure}
+
+Por fim, realizou-se um teste de stress no sistema com um sinal square de amplitude 1, o que seria semelhante ao carro do cartucho de um impressora se deslocando durante o processo de impressão.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/teste_square.PNG}
+    \caption{Resposta a squares}
+    \label{fig:lgr}
+\end{figure}
+
+A função de transferência do caminho direto do sistema fica com o seguinte formato (\ref{caminhodireto}):
+
+\begin{equation}
+G(z)=(\frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}) . (3.46\frac{z - 0.7116}{z - 0.4493})
+\label{caminhodireto}
+\end{equation}
+
+Desenvolvendo-se algebricamente obtêm-se (\ref{caminhodiretodes}):
+
+\begin{equation}
+G(z)= \frac{Y(z)}{U(z)} = \frac{0.672001 z^{2}-0.797872 z+0.227482}{z^{3}-2.1069 z^{2}+1.40238 z-0.295469}
+\label{caminhodiretodes}
+\end{equation}
+
+Por fim, a equação das diferenças do sistema é descrita em \ref{equacaodasdiferencas}:
+
+\begin{equation}
+\begin{split}
+y[k]=0.672001 \cdot x[k-1]-0.797872 \cdot x[k-2]+0.227482 \cdot x[k-3] \\-2.1069 \cdot y[k-1]+1.40238 \cdot y[k-2]-0.295469 \cdot y[k-3]
+\end{split}
+\label{equacaodasdiferencas}
+\end{equation}
+
+A equação das diferenças é uma descrição do sistema adequada a ser utilizada em microcontroladores digitais.
+
 
 %%$$ Taxa de amortecimento
 
 
-\subsubsection{Cálculo dos Parâmetros do Controlador}
-
 %% Simulação
 
-\subsubsection{Validação em Simulação}
+
 
 %% TODO Sugestão: Comentar sobre Validação Cruzada: aplicar um sinal de entrada na porção dos dados que não foi utilizada para obter a função de transferência e compara com resultado experimental
 
