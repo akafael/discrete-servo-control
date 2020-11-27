@@ -145,6 +145,27 @@ O acionamento do motor foi feito através de uma ponte H. Um fator que introduz 
     \label{fig:pid_tinkercad}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/grafico_steps.PNG}
+    \caption{Steps x tempo (ms)}
+    \label{fig:steps}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/sinal_8_bits.PNG} 
+    \caption{Sinal de 8 bits}
+    \label{fig:sinal8bits}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/derivada_steps.PNG} 
+    \caption{Derivada do sinal}
+    \label{fig:sinal8bits}
+\end{figure}
+
 \subsubsection{Região Não Linear}
 
 Idealmente o comportamento poderia ser representado através de um modelo linear para todas as condições de operação, No entanto, na prática devido as características do hardware, temos uma região de operação a qual o modelo pode ser utilizado delimitada por uma região inferior e superior.
@@ -234,7 +255,7 @@ G(z) = \frac{Y(z)}{U(z)} = \frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}
 \label{transfdisc}
 \end{equation}
 
-Onde o período de amostragem é de $T = 0.1s$
+Onde o período de amostragem é de $T = 100 ms$, o tempo é dado em $ms$ e o sinal de entrada e saída em $bits$.
 
 \subsection{Projeto do controlador}
 
@@ -307,6 +328,15 @@ Observa-se que o requisito de \textit{overshoot} foi alcançado. Na gráfico da 
     \label{fig:saidactrl1up}
 \end{figure}
 
+A implementação em arduino do primeiro controlador segue na figura \ref{fig:resultadoctrl1}, em que foi utilizado um ganho de 0.25:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/resultado_controle_1_implem.PNG}
+    \caption{Implementação em arduino do controlador 1}
+    \label{fig:resultadoctrl1}
+\end{figure}
+
  Entretanto, o tempo de assentamento é maior que 2 segundos, mais que o dobro do tempo de assentamento do requisito de projeto. Por esse motivo, propõe-se um segundo tipo de proposta de projeto. 
 
 \subsection{Segunda proposta de controlador}
@@ -368,7 +398,7 @@ Observa-se na figura \ref{fig:degrauavanco} que o requisito tempo de assentament
     \label{fig:degrauavanco}
 \end{figure}
 
-O overshoot por sua vez fica abaixo de $5$ \%, e esse requisito também é resolvido.
+O \textit{overshoot} por sua vez fica abaixo de $5$ \%, e esse requisito também é resolvido.
 
 \begin{figure}[H]
     \centering
@@ -487,7 +517,6 @@ O código usado para caracterização da zona morta do sistema e avaliação do 
 \subsubsection*{Identificação da planta}
 O código usado para identificação dos parâmetros do planta:
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor_pulses/test_dcmotor_pulses.ino}
-
 
 \newpage
 \subsubsection*{Controle}
