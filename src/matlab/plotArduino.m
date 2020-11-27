@@ -13,11 +13,13 @@ function x = plotArduino(port,buffersize)
     while ((~isempty(serialPort)) && strcmp(serialPort.Status,'open') && i <= buffersize)
         % Read Data
         str = fgetl(serialPort);
-        str = strsplit(str, ',')
+        str = strsplit(str, ' ')
+        [~,n] = size(str)
 
         x(i,1) = str2double(str{1});
         x(i,2) = str2double(str{2});
         x(i,3) = str2double(str{3});
+        x(i,4) = str2double(str{4});
 
         % Update Index
         i = i+1;

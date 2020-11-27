@@ -31,8 +31,12 @@ bool rotateCCW;       // Flag for Rotation Direction
 int cntrlP = 0;
 int cntrlI = 0;
 int cntrlD = 0;
-int cntrlSignal = 0;
+float cntrlSignal = 0;
 int error,lastError = 0;
+
+unsigned long k = 0;
+float bufferX[4];
+float bufferY[4];
 
 // Timers (ms)
 unsigned long currentTime;
@@ -64,6 +68,15 @@ void setup() {
   	pinMode(MOTOR_EN1_PIN, OUTPUT);
   	pinMode(MOTOR_EN2_PIN, OUTPUT);
 
+    bufferX[3] = 0;
+    bufferX[2] = 0;
+    bufferX[1] = 0;
+    bufferX[0] = 0;
+    bufferY[3] = 0;
+    bufferY[2] = 0;
+    bufferY[1] = 0;
+    bufferY[0] = 0;
+
   	// Serial
     Serial.begin(9600);
 }
@@ -73,12 +86,6 @@ void loop(){
   	if(millis() >= lastTime + periodTime)
     {
       lastTime = millis(); // Reset Timer
-      
-      // Read Input (Range: 0-1023)
-      int inputRead = analogRead(PIN_INPUT_REF);
-      int inputP = 10;//analogRead(PIN_INPUT_P);
-      int inputI = 0;//analogRead(PIN_INPUT_I);
-      int inputD = 0;//analogRead(PIN_INPUT_D);
 
       // Read Encoder
       noInterrupts();
@@ -86,11 +93,23 @@ void loop(){
       encoderCount = 0;
       interrupts();
       
-      // PID Control action
-      lastError = error;
-      error = inputRead - encoderCountTotal;
-      cntrlSignal = error >> 2;
+      // Read Input (Range: 0-1023)
+      int inputRead = analogRead(PIN_INPUT_REF);;
 
+      // Rotate Buffer
+      bufferX[3] = bufferX[2];
+      bufferX[2] = bufferX[1];
+      bufferX[1] = bufferX[0];
+      bufferX[0] = inputRead;
+
+      cntrlSignal = 0.672001*bufferX[1] - 0.797872*bufferX[2] + 0.227482 * bufferX[3] -2.1069 * bufferY[1] + 1.40238 * bufferY[2] - 0.295469 * bufferY[3];
+
+      // Control Buffer
+      bufferY[3] = bufferY[2];
+      bufferY[2] = bufferY[1];
+      bufferY[1] = bufferY[0];
+      bufferY[0] = cntrlSignal;
+      
       if( cntrlSignal >= ERRO_MIN )
       {
         rotateCCW = LOW;
