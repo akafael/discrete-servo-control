@@ -93,15 +93,17 @@ Para o desenvolvimento do projeto foi feito a partir das etapas relatadas a segu
 
 \section{Desenvolvimento}
 
-As etapas de desenvolvimento foram feitas em 3 fases. Primeiramente foi feito um estudo e caracterização de cada um dos componentes, depois foram feitos vários visando a identificação do modelo da planta bem como suas propriedades do ponto de vista de controle. Por fim a partir dos dados obtidos experimentalmente foi desenvolvido um controlador que pudesse permitir o funcionamento do sistema a partir dos requisitos desejados.
+O desenvolvimento foi feitas em 3 fases: implementação em hardware, caracterização do sistema e projeto do controlador. Primeiramente foi feito um estudo e caracterização de cada um dos componentes, depois foram feitos vários testes visando a identificação do modelo da planta bem como suas propriedades do ponto de vista de controle e por fim foi desenvolvido um controlador a partir dos dados obtidos experimentalmente que pudesse permitir o funcionamento do sistema a partir dos requisitos desejados.
 
 \subsection{Implementação em Hardware}
 
-Para garantir os requisitos necessários para a implementação do controlador em tempo discreto foi necessário implementar algumas funcionalidades do zero. Inicialmente tudo foi implementado no \textit{Tinkercad} e posteriormente foi adotado o estudo direto na planta.
+Para o projeto de um sistema de controle é necessário garantir alguns requisitos básicos do ponto de vista de acionamento, sensoriamento e temporização. Primeiramente é necessário que os atuadores e os sensores deve possuir um faixa de operação compatível com a dinâmica esperada do sistema. Além disto deve ser observado também o tempo necessário para a ação de controle como forma de garantir uma amostragem com período constante, permitindo assim o uso da teoria de controle desenvolvida ao longo da disciplina.
+
+Como efeito, em virtude da natureza dos componentes escolhidos, foi necessário implementar algumas funcionalidades do zero. Em particular um tempo maior foi necessário na leitura do deslocamento angular a partir do sensor óptico em no acionamento do motor conjunto com o Arduino. Este estudo foi implementado primeiramente no \textit{Tinkercad} e posteriormente foi feito diretamente na planta.
 
 \subsubsection{Simulação no Tinkercad}
 
-Como forma de prevenir danos as peças, foi utilizado o Tinkercad para simulação do sistema e como uma plataforma de estudos a respeito do comportamento do motor DC em conjunto com o encoder incremental. O Tinkercad foi escolhido por sua simplicidade de uso e facilidade de integração do circuito diretamente com a programação do Arduino.
+Como forma de prevenir danos as peças, foi utilizado o \textit{Tinkercad} para simulação do sistema e como uma plataforma de estudos a respeito do comportamento do motor DC em conjunto com o encoder incremental. O \textit{Tinkercad} foi escolhido por sua simplicidade de uso e facilidade de integração do circuito diretamente com a programação do Arduino.
 
 \begin{figure}[H]
     \centering
@@ -112,11 +114,13 @@ Como forma de prevenir danos as peças, foi utilizado o Tinkercad para simulaç�
 
 Desta forma foi possível avaliar os algoritmos usados para a contagem de passo pelo encoder em conjunto com o acionamento do motor, cálculo do PID e detecção de sentido de rotação. Conforme ilustrado pela figura \ref{fig:pid_tinkercad}, foram utilizados potenciômetros para um ajuste manual e grosseiro dos ganhos do PID. Também foi adotado um display para mostrar os ganhos adotados. Com isto foi possível chegar a uma combinação de ganhos que permitia o motor alcançar o valor da referência ou ao menos parar após um tempo de movimento.
 
-Dado as limitações da plataforma, principalmente nos modelos adotados para o motor e para comportamento das portas e ações do Arduíno não foi possível adotar nenhuma forma de identificação dos parâmetros. Concluído o estudo preliminar passamos para experimentos feitos diretamente na planta real.
+Uma atenção maior foi dada a como obter e condicionar os dados do encoder e como definir uma estrutura mínima do código para acondicionar tanto o acionamento como a leitura dos sensores dentro do período escolhido. Com isto foi possível gerar alguns gráficos iniciais da variação da posição ao longo do tempo. Porém dado as limitações da plataforma, principalmente nos modelos adotados para o motor e para comportamento das portas e ações do Arduíno não foi possível adotar nenhuma forma de identificação dos parâmetros.
+
+O maior problema encontrado foi que o tempo real gasto pelo funções do Arduino não era obedecido pela simulação e com isto não dava para verificar qual a frequência máxima que poderia ser usada para amostragem. Assim, concluído o estudo preliminar passamos para experimentos feitos diretamente na planta real.
 
 \subsubsection{Temporização}
 
-Como o estilo de controlador adotado pressupõe uma amostragem fixa, foi necessário adotar um controle de temporização estrito como forma de garantir que tanto o acionamento como a leitura do encoder seria feita dentro do tempo adequado. A leitura de cada passo do encoder é feita através de interrupção e a frequência de acionamento é feita a partir da comparação do valor de tempo para o instante atual com temporizadores internos.
+Como o estilo de controlador adotado pressupõe uma amostragem fixa, foi necessário adotar um controle de temporização estrito como forma de garantir que tanto o acionamento como a leitura do encoder seria feita dentro do tempo adequado. A leitura de cada passo do encoder é feita através de interrupção e a frequência de acionamento é feita a partir da comparação do valor de tempo para o instante atual com temporizadores internos. Para avaliar o tempo gasto em um conjunto de instruções foi adota uma estratégia similar registrando os valores intermediários e enviando para a serial, uma vez que não tinha disponível nenhum osciloscópio ou equipamento de medida externo para esta avaliação.
 
 \subsubsection{Leitura Encoder}
 
@@ -141,21 +145,42 @@ O acionamento do motor foi feito através de uma ponte H. Um fator que introduz 
     \label{fig:pid_tinkercad}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/grafico_steps.PNG}
+    \caption{Steps x tempo (ms)}
+    \label{fig:steps}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/sinal_8_bits.PNG} 
+    \caption{Sinal de 8 bits}
+    \label{fig:sinal8bits}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/derivada_steps.PNG} 
+    \caption{Derivada do sinal}
+    \label{fig:sinal8bits}
+\end{figure}
+
 \subsubsection{Região Não Linear}
 
 Idealmente o comportamento poderia ser representado através de um modelo linear para todas as condições de operação, No entanto, na prática devido as características do hardware, temos uma região de operação a qual o modelo pode ser utilizado delimitada por uma região inferior e superior.
 
 Para o motor começar a se mover é preciso fornecer um mínimo de energia. Esta quantidade varia de acordo com as características eletromecânicas do motor. Em particular para o motor utilizado, a faixa de operação é de 3V a 6V, sendo 3V o mínimo para fazer o motor girar e 6V uma tensão máxima para não danificar.
 
-A conversão do sinal de controle do Arduino em um sinal de potência foi feita através uma ponte H em conjunto com um sinal PWM. Como efeito a tensão de alimentação da fonte utilizada para o motor foi amostrada usando 8 bits. Desta forma, chegar ao valor teórico correspondente a zona morta do motor para uma alimentação de 5V basta 
+A conversão do sinal de controle do Arduino em um sinal de potência foi feita através uma ponte H em conjunto com um sinal PWM. Como efeito, a tensão de alimentação da fonte utilizada para o motor foi amostrada usando 8 bits. Desta forma, chegar ao valor teórico correspondente a zona morta do motor para uma alimentação de 5V basta 
 
 $$
 D_{min} = \frac{3V}{V_{fonte}}(2^8 -1) = \frac{3*255}{5} = 153
 $$
 
-Como forma de obter este valor experimentalmente foi feito um programa aplicando um sinal de entrada de dente de serra. Isto é o valor de referência passado para a tensão do motor foi gradualmente aumentado e em seguida reduzido. Os valores obtidos foram registrados a partir do Matlab através da conexão Serial com o Arduino.
+Para obter este valor experimentalmente foi feito um programa aplicando um sinal de entrada de dente de serra (em anexo). Isto é, o valor de referência passado para a tensão do motor foi gradualmente aumentado e em seguida gradualmente reduzido de forma periódica. Os valores obtidos foram registrados a partir do Matlab através da conexão Serial com o Arduino.
 
-Mesmo que frequência interna do Arduino seja próximo de $14 MHz$, as operações de comunicação via Serial são bastante dispendiosas. Por conta disto, o menor período conseguido experimentalmente a qual é mantida um a operação com ciclo em tempo contante foi de $60ms$. Para períodos menores que este valor, o tempo gasto com a comunicação serial, cálculos e as interrupções do encoder acabava sendo maior que o período e as garantias de funcionamento em tempo real eram perdidas.
+Mesmo que frequência interna do Arduino seja próximo de $14 MHz$, as operações de comunicação via Serial são bastante dispendiosas. Por conta disto, o menor período conseguido experimentalmente a qual é mantida um a operação com ciclo em tempo contante foi de $60ms$. Foi escolhido então uma período de $100ms$ de forma a permitir uma margem segura de folga de tempo para todas as operações. Para períodos menores que este valor, o tempo gasto com a comunicação serial, cálculos e as interrupções do encoder acabava sendo maior que o período de amostragem fixo e as garantias de funcionamento em tempo real eram perdidas.
 
 %% TODO Adicionar Gráfico Leitura Arduino onda Dente de Serra
 
@@ -184,7 +209,7 @@ De forma que poderíamos adotar como uma aproximação razoável do comportament
     G_m(s) = \frac{\beta}{\alpha s + 1}
 \end{equation}
 
-Neste sistema temos apenas a medida da posição através do encoder. Este processo é feito através do conjunto de várias etapas, incluindo amostragem através da contagem do pulsos e a discretização referente ao instante de contabilização da leitura do encoder. No entanto, dado a grande diferença entre o tempo gasto neste processo com o tempo gasto na comunicação serial, podemos aproximar o sistema de medição de posição apenas como um ganho.
+Neste sistema temos apenas a medida da posição através do encoder. Este processo é feito através do conjunto de várias etapas, incluindo amostragem através da contagem do pulsos e a discretização referente ao instante de contabilização da leitura do sensor. No entanto, dado a grande diferença entre o tempo gasto neste processo com o tempo gasto na comunicação serial, podemos aproximar a dinâmica do sistema de medição de posição como um ganho fixo.
 
 Feito as devidas considerações, a planta sem controlador pode ser representada da seguinte forma
 
@@ -230,16 +255,15 @@ G(z) = \frac{Y(z)}{U(z)} = \frac{0.19422\,z-0.092392}{z^2-1.6576\,z+0.65762}
 \label{transfdisc}
 \end{equation}
 
-Onde o período de amostragem é de $T = 0.1s$
+Onde o período de amostragem é de $T = 100 ms$, o tempo é dado em $ms$ e o sinal de entrada e saída em $bits$.
 
-\subsection{Controlador}
+\subsection{Projeto do controlador}
 
 A planta escolhida para esse trabalho é um dispositivo tipicamente utilizado para posicionamento de cartuchos de impressoras e scanners. Esse equipamentos não tem requisitos tão rígidos quanto velocidade como servos motores de aeromodelos e possuem baixa tolerância para grandes valores de sobressinal. 
 
 \subsubsection{Definição Requisitos}
 
 O desempenho do controlador será algo dentro dos limites físicos dos dispositivos envolvidos. No que inclui, a taxa de variação da posição angular não pode ser maior que $10Hz$, a precisão está bastante limitada as taxas de amostragem de 8 bits do Arduino e quantidade de buracos do disco do encoder. Tendo isto em mente foi definido como requisitos para o sistema:
-
 
 \begin{itemize}
    \item Overshoot <= 16 \%;
@@ -268,7 +292,7 @@ As etapas desta análise seguem na sequência a seguir:
    \item Determinar ponto de intersecção do LGR com a linha do conjunto de dados de fator de amortecimento;
  \end{enumerate}
 
-Utilizando-se a função rlocus do Matlab (Função que gera o lugar da Raízes de uma função de transferência) e a função zgrid (que plota a área do plano Z no plano imaginário), presentes no Matlab, temos na figura \ref{fig:lgr} o LGR da função de transferência da planta discretizada em \ref{transfdisc}:
+Utilizando-se a função \textit{rlocus} do Matlab (Função que gera o lugar da Raízes de uma função de transferência) e a função \textit{zgrid} (que plota a área do plano Z no plano imaginário), presentes no Matlab, temos na figura \ref{fig:lgr} o LGR da função de transferência da planta discretizada em \ref{transfdisc}:
 
 \begin{figure}[H]
     \centering
@@ -277,7 +301,7 @@ Utilizando-se a função rlocus do Matlab (Função que gera o lugar da Raízes 
     \label{fig:lgr}
 \end{figure}
 
-Observa-se que o ganho para a obtenção do comportamento deseja do sistema é de 0.234. Para validação desse resultado, simulou-se o sistema em malha fechado no Simulink com segue na figura \ref{fig:controle1}:
+Observa-se que o ganho para a obtenção do comportamento deseja do sistema é de $0.234$. Para validação desse resultado, simulou-se o sistema em malha fechado no Simulink com segue na figura \ref{fig:controle1}:
 
 \begin{figure}[H]
     \centering
@@ -295,13 +319,22 @@ Os resultados obtidos estão dispostos a seguir nas figuras \ref{fig:saidactrl1}
     \label{fig:saidactrl1}
 \end{figure}
 
-Observa-se que o requisito de overshoot foi alcançado. Na gráfico da figura \ref{fig:saidactrl1up} foi aumentado a escala do gráfico a fim de ser mais preciso quanto a essa análise. O overshoot é aproximadamente de 5 \% com valores abaixo desse valor para o trecho em que o sinal já está estabilizado em 1.
+Observa-se que o requisito de \textit{overshoot} foi alcançado. Na gráfico da figura \ref{fig:saidactrl1up} foi aumentado a escala do gráfico a fim de ser mais preciso quanto a essa análise. O \textit{overshoot} é aproximadamente de 5 \% com valores abaixo desse valor para o trecho em que o sinal já está estabilizado em 1.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{src/tex/img/saida_controle1_up.PNG}
-    \caption{Aumento de escala para observação do overshoot da proposta 1 de controle}
+    \caption{Aumento de escala para observação do \textit{overshoot} da proposta 1 de controle}
     \label{fig:saidactrl1up}
+\end{figure}
+
+A implementação em arduino do primeiro controlador segue na figura \ref{fig:resultadoctrl1}, em que foi utilizado um ganho de 0.25:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/resultado_controle_1_implem.PNG}
+    \caption{Implementação em arduino do controlador 1}
+    \label{fig:resultadoctrl1}
 \end{figure}
 
  Entretanto, o tempo de assentamento é maior que 2 segundos, mais que o dobro do tempo de assentamento do requisito de projeto. Por esse motivo, propõe-se um segundo tipo de proposta de projeto. 
@@ -315,7 +348,7 @@ G(s) = \frac{0.5011(s+70.0259)}{(s+0.00058419)(s+4.19042)}
 \label{equacao_s}
 \end{equation}
 
-Utiliza-se a estratégia de anular o polo de 4.19042 da planta e adicionar um outro polo. A escolha do novo polo irá seguir a relação \ref{assentamento_eq}:
+Utiliza-se a estratégia de anular o polo de $4.19042$ da planta e adicionar um outro polo. A escolha do novo polo irá seguir a relação \ref{assentamento_eq}:
 
 \begin{equation}
 \zeta \omega_{n}=\frac{4}{T_{s}}
@@ -324,14 +357,14 @@ Utiliza-se a estratégia de anular o polo de 4.19042 da planta e adicionar um ou
 
 
 
-Como se quer tempo de assentamento de 1 segundo, utiliza-se um fator de amortecimento menor sem deixar de se observar overshoot. A escolha então será de fator de amortecimento de 0.5. Tem-se então que a frequência natural para o caso é de \textbf{8 radianos por segundos}. O controlador tem a seguinte lei do formação \ref{novogc}:
+Como se quer tempo de assentamento de 1 segundo, utiliza-se um fator de amortecimento menor sem deixar de se observar \textit{overshoot}. A escolha então será de fator de amortecimento de $0.5$. Tem-se então que a frequência natural para o caso é de \textbf{8 radianos por segundos}. O controlador tem a seguinte lei do formação \ref{novogc}:
 
 \begin{equation}
 G_{c}(s)=\frac{s+4.19042}{s+8}
 \label{novogc}
 \end{equation}
 
-Plota-se então o Diagrama de BODE da planta para realizar a compensação de ganho devido ao avanço do novo controlador. Analisa-se que em próximo ao polo que é anulado na planta, o ganho é de 3.46 dB.
+Plota-se então o Diagrama de BODE da planta para realizar a compensação de ganho devido ao avanço do novo controlador. Analisa-se que em próximo ao polo que é anulado na planta, o ganho é de $3.46\ dB$.
 
 \begin{figure}[H]
     \centering
@@ -365,7 +398,7 @@ Observa-se na figura \ref{fig:degrauavanco} que o requisito tempo de assentament
     \label{fig:degrauavanco}
 \end{figure}
 
-O overshoot por sua vez fica abaixo de 5 \%, e esse requisito também é resolvido.
+O \textit{overshoot} por sua vez fica abaixo de $5$ \%, e esse requisito também é resolvido.
 
 \begin{figure}[H]
     \centering
@@ -408,22 +441,6 @@ y[k]=0.672001 \cdot x[k-1]-0.797872 \cdot x[k-2]+0.227482 \cdot x[k-3] \\-2.1069
 
 A equação das diferenças é uma descrição do sistema adequada a ser utilizada em microcontroladores digitais.
 
-
-%%$$ Taxa de amortecimento
-
-
-%% Simulação
-
-
-
-%% TODO Sugestão: Comentar sobre Validação Cruzada: aplicar um sinal de entrada na porção dos dados que não foi utilizada para obter a função de transferência e compara com resultado experimental
-
-%% TODO Montar Planta no Simulink
-
-%\subsubsection{Validação na planta}
-
-%% TODO Montar um controle proporcional básico na planta
-
 \section{Conclusão}
 
 A implementação de um sistema de controle de posição a partir de Arduino trouxe vários desafios. Preparar um hardware e garantir as mínimas condições de operação em tempo real para os controladores acabou tomando mais tempo que o previsto. Durante o processo alguns motores foram danificados e também houve perda de um encoder, porém tal representou uma excelente oportunidade de aprendizado tanto em como lidar com as características de cada dispositivo usado como também permitir uma compreensão melhor da teoria de controle.
@@ -431,6 +448,10 @@ A implementação de um sistema de controle de posição a partir de Arduino tro
 Como abordagem principal, tanto na escolha do tema dos métodos utilizados foi buscado a todo momento a integração dos conhecimentos desenvolvidos da teoria de controle de sistema a tempo discreto em conjunto os campos de programação de microcontroladores, instrumentação digital e programação em tempo real. Esta abordagem trouxe seus ônus por acrescentar etapas no projeto além da simulação pura de um sistema físico idealizado, mas contribuiu bastante no melhor entendimento do impacto das características físicas e tipos de ruídos associados de cada parte no sistema de controle.
 
 %% TODO Comentar sobre os resultados do controlador
+
+A partir do estudo feito, foi possível projetar um controlador que atendesse os requisitos propostos tanto para o sistema real como simulado. Com as simplificações feitas na planta, reduzindo o frequência da dinâmica do controlador e da planta foi possível simplificar bastante o projeto final, de modo que um ganho proporcional foi o suficiente para atender os requisitos mínimos de desempenho. Em continuidade a este estudo, margens mais rígidas de desempenho podem ser testadas como forma de permitir o estudo de controladores mais complexos.
+
+Embora não apresentado aqui, o estudo feito ao longo deste projeto permitiu verificar experimentalmente de forma qualitativa o comportamento da planta em malha fechada para diversos valores de ganho. Tendo sido possível perceber as regiões com comportamento amortecido, oscilação amortecida e instabilidade. O que contribuiu bastante para a consolidação dos conhecimentos desenvolvidos na matéria.
 
 % ------------------------------------------------------------------------------
 \newpage
@@ -496,7 +517,6 @@ O código usado para caracterização da zona morta do sistema e avaliação do 
 \subsubsection*{Identificação da planta}
 O código usado para identificação dos parâmetros do planta:
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor_pulses/test_dcmotor_pulses.ino}
-
 
 \newpage
 \subsubsection*{Controle}
