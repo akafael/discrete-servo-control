@@ -145,27 +145,6 @@ O acionamento do motor foi feito através de uma ponte H. Um fator que introduz 
     \label{fig:pid_tinkercad}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{src/tex/img/grafico_steps.PNG}
-    \caption{Steps x tempo (ms)}
-    \label{fig:steps}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{src/tex/img/sinal_8_bits.PNG} 
-    \caption{Sinal de 8 bits}
-    \label{fig:sinal8bits}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{src/tex/img/derivada_steps.PNG} 
-    \caption{Derivada do sinal}
-    \label{fig:sinal8bits}
-\end{figure}
-
 \subsubsection{Região Não Linear}
 
 Idealmente o comportamento poderia ser representado através de um modelo linear para todas as condições de operação, No entanto, na prática devido as características do hardware, temos uma região de operação a qual o modelo pode ser utilizado delimitada por uma região inferior e superior.
@@ -211,7 +190,7 @@ De forma que poderíamos adotar como uma aproximação razoável do comportament
 
 Neste sistema temos apenas a medida da posição através do encoder. Este processo é feito através do conjunto de várias etapas, incluindo amostragem através da contagem do pulsos e a discretização referente ao instante de contabilização da leitura do sensor. No entanto, dado a grande diferença entre o tempo gasto neste processo com o tempo gasto na comunicação serial, podemos aproximar a dinâmica do sistema de medição de posição como um ganho fixo.
 
-Feito as devidas considerações, a planta sem controlador pode ser representada da seguinte forma
+%Feito as devidas considerações, a planta sem controlador pode ser representada da seguinte forma
 
 %% TODO Acrescentar diagrama de blocos do sistema em malha aberta ( ZOH + Planta de 1 ordem + integrador  + ganho)
 
@@ -244,9 +223,33 @@ Tomando um conjunto maior de dados podemos reescrever a equação na forma matri
   \end{array}\right)
 \end{equation}
 
-A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear. Para obter uma melhor caracterização foi gerado um sinal formado por pulsos de tamanhos e durações variadas diretamente no Arduino. % Conforme mostrado na figura \ref{}
+A partir do qual podemos relacionar o sinal de saída com o sinal de entrada do sistema e obter os parâmetros $\alpha_1$,$\alpha_2$,$\beta_1$ e $\beta_2$ por regressão linear. Para obter uma melhor caracterização foi gerado um sinal formado por pulsos de tamanhos e durações variadas diretamente no Arduino.  Conforme mostrado na figura \ref{fig:sinal8bits}
 
-%% TODO Adicionar Gráfico Leitura Arduino onda pulsos
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/sinal_8_bits.PNG} 
+    \caption{Sinal de 8 bits}
+    \label{fig:sinal8bits}
+\end{figure}
+
+A partir deste sinal foi obtido a seguinte resposta:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/grafico_steps.PNG}
+    \caption{Steps x tempo (ms)}
+    \label{fig:steps}
+\end{figure}
+
+Para visualizar melhor foi calculado a estimativa da velocidade, e como pode ser observado o gráfico da velocidade da planta em malha aberta acompanha o mesmo formato do gráfico do sinal de entrada.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/tex/img/derivada_steps.PNG} 
+    \caption{Derivada do sinal}
+    \label{fig:sinal8bits}
+\end{figure}
+
 
 Os dados do tempo, leitura do encoder e sinal de referência foram então enviados para o computador através de comunicação serial e com auxílio do Matlab (código em anexo) foi obtido a seguinte função de transferência:
 
@@ -328,7 +331,7 @@ Observa-se que o requisito de \textit{overshoot} foi alcançado. Na gráfico da 
     \label{fig:saidactrl1up}
 \end{figure}
 
-A implementação em arduino do primeiro controlador segue na figura \ref{fig:resultadoctrl1}, em que foi utilizado um ganho de 0.25:
+A implementação em arduino do primeiro controlador segue na figura \ref{fig:resultadoctrl1}, em que foi utilizado um ganho de 0.25. O valor 0.25 foi utilizado para ganho por permitir a implementação da operação através de um shift e com isto o cálculo teria pouco impacto no tempo do loop.
 
 \begin{figure}[H]
     \centering
@@ -337,7 +340,9 @@ A implementação em arduino do primeiro controlador segue na figura \ref{fig:re
     \label{fig:resultadoctrl1}
 \end{figure}
 
- Entretanto, o tempo de assentamento é maior que 2 segundos, mais que o dobro do tempo de assentamento do requisito de projeto. Por esse motivo, propõe-se um segundo tipo de proposta de projeto. 
+A sinal de referência foi gerado manualmente através de um potênciometro associado ao Arduino. Pelo gráfico podemos perceber que para varições lentas a planta acompanha a referência mas sempre com um atraso e um erro estático. Para uma variação mais rápida o sistema não consegue acompanhar. Também foi notado que para uma variação pequena o erro acaba sendo maior pois o motor fica muito próximo da zona morta e com isto acaba não movimentando. 
+
+Somado a  todos estes problemas e temos que o tempo de assentamento é maior que 2 segundos em simulação, mais que o dobro do tempo de assentamento do requisito de projeto. Por esse motivo, propõe-se um segundo tipo de proposta de projeto. 
 
 \subsection{Segunda proposta de controlador}
 
@@ -354,8 +359,6 @@ Utiliza-se a estratégia de anular o polo de $4.19042$ da planta e adicionar um 
 \zeta \omega_{n}=\frac{4}{T_{s}}
 \label{assentamento_eq}
 \end{equation}
-
-
 
 Como se quer tempo de assentamento de 1 segundo, utiliza-se um fator de amortecimento menor sem deixar de se observar \textit{overshoot}. A escolha então será de fator de amortecimento de $0.5$. Tem-se então que a frequência natural para o caso é de \textbf{8 radianos por segundos}. O controlador tem a seguinte lei do formação \ref{novogc}:
 
@@ -468,9 +471,10 @@ Embora não apresentado aqui, o estudo feito ao longo deste projeto permitiu ver
 \nocite{matlabcontrol}
 \nocite{matlabsymbolic}
 \nocite{ogata2010modern}
+\nocite{nise2012}
 
 % ------------------------------------------------------------------------------
-%\newpage
+\newpage
 \section*{Anexos}
 \addcontentsline{toc}{section}{Anexos} % Adiciona linha no indice
 %\subsection*{Python}
@@ -482,12 +486,11 @@ Embora não apresentado aqui, o estudo feito ao longo deste projeto permitiu ver
 %\newpage
 \subsection*{Matlab}
 
-\subsubsection*{Parte 1}
-Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em conjunto das toolbox \textit{Control System}\cite{matlabcontrol} e \textit{Symbolic Math}\cite{matlabsymbolic}. Segue o código referente usado
+%\subsubsection*{Parte 1}
+%Para o desenho dos gráficos e simulações foi utilizado o \textit{Matlab} em conjunto das toolbox \textit{Control System}\cite{matlabcontrol} e \textit{Symbolic Math}\cite{matlabsymbolic}. Segue o código referente usado
 
-\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/project.m}
+%\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/project.m}
 
-\newpage
 \subsubsection*{Leitura dados Arduino}
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{matlab}{../matlab/plotArduino.m}
 
@@ -519,9 +522,14 @@ O código usado para identificação dos parâmetros do planta:
 \inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/test_dcmotor_pulses/test_dcmotor_pulses.ino}
 
 \newpage
-\subsubsection*{Controle}
-Para implementação do controlador foi usado o seguinte código
-\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/pid_control/pid_control.ino}
+\subsubsection*{Controlador 1}
+Para implementação do controlador P foi usado o seguinte código
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/pid_control_plant/pid_control_plant.ino}
+
+\newpage
+\subsubsection*{Controlador 2}
+Para implementação do controlador 2 foi usado o seguinte código
+\inputminted[xleftmargin=15pt,linenos,frame=single,framesep=5pt,breaklines=true]{c++}{../arduino/freq_control_plant/freq_control_plant.ino}
 
 % https://www.usinainfo.com.br/drivers-para-motores/driver-ponte-h-ou-motor-de-passo-l298-2302.html
 % ------------------------------------------------------------------------------
