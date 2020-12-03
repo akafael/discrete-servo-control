@@ -10,7 +10,7 @@
 \usepackage{caption}
 
 \usetheme{metropolis} % Use metropolis theme
-\title{}
+\title{Controle discreto de um motor DC}
 
 \date{03 de Dezembro de 2020}
 
@@ -22,21 +22,13 @@
 \tableofcontents
 \end{frame}
 
-\section{Controle de posição de um motor DC}
-%\section{Metodologia}
+\section{Introdução}
 \subsection{Objetivos}
 
-% Bloco para representação de um slide
-\begin{frame}{Slide de Exemplo} % título "Slide de Exemplo"
+\begin{frame}{Objetivo}
 
-% Caixa para destaque sem titulo
 \begin{block}{}
-Caixa para destaque sem título
-\end{block}
-
-% Caixa para destaque sem titulo
-\begin{block}{Titulo da Caixa}
-Caixa para destaque com título
+Desenvolver um sistema de controle de posição em tempo discreto a partir de hardware de baixo custo.
 \end{block}
 
 \end{frame}
@@ -50,7 +42,7 @@ Caixa para destaque com título
 \end{figure}
 \end{frame}
 
-\section{Construção Sistema}
+\section{Construção do Sistema}
 
 \subsection{Implementação em Hardware}
 
@@ -72,13 +64,13 @@ Caixa para destaque com título
 \end{figure}
 \end{frame}
 
-\subsection{Caracterização sistema}
+\subsection{Caracterização do Sistema}
 
 \begin{frame}{Identificação de Zona Morta}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/grafico_dente_serra.jpg}
-    \caption{Resposta um sinal triangular}
+    \caption{Resposta do sistema para onda triangular}
     \label{fig:control_1}
 \end{figure}
 \end{frame}
@@ -93,16 +85,17 @@ Caixa para destaque com título
     \end{block}
 \end{frame}
 
-\begin{frame}{Identificação do sistema}
+\begin{frame}{Identificação do Sistema}
 \begin{figure}
     \centering
-    \includegraphics[width = 0.6\linewidth]{sinal_8_bits.PNG}
+    \includegraphics[width = 0.5\linewidth]{sinal_8_bits.PNG}
     \label{fig:control_1}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[width = 0.6\linewidth]{derivada_steps.PNG}
+    \includegraphics[width = 0.5\linewidth]{derivada_steps.PNG}
     \label{fig:control_1}
+    \caption{Comparativo entre sinal de entrada e velocidade do motor}
 \end{figure}
 \end{frame}
 
@@ -121,40 +114,40 @@ Caixa para destaque com título
     \end{block}
 \end{frame}
 
-\begin{frame}{Análise resposta em frequência}
+\begin{frame}{Análise da resposta em frequência}
 \begin{columns}
 \begin{column}{0.6\textwidth}  %%<--- here
 \begin{figure}
     \centering
     \includegraphics[width = 1.1\linewidth]{src/tex/img/bode.PNG}
+    \caption{Diagrama de Bode do sistema}
 \end{figure}
 \end{column}
 \begin{column}{0.4\textwidth}
 \begin{itemize}
-    \item Largura de Banda Bastante Limitada
+    \item Largura de banda bastante limitada
 \end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
 
-\section{Projeto Controlador}
+\section{Projeto do Controlador}
 \subsection{Controle Proporcional}
-
 
 \begin{frame}{LGR da planta no plano Z}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/script.PNG}
-    \caption{}
+    \caption{Comandos no Matlab}
     \label{fig:control_1}
 \end{figure}
 \end{frame}
 
-\begin{frame}{LGR da planta no plano Z}
+\begin{frame}{LGR da Planta no Plano Z}
 \begin{figure}
     \centering
     \includegraphics[width = 0.8 \linewidth]{src/tex/img/rlocus.PNG}
-    \caption{}
+    \caption{Gráfico do lugar das raízes}
     \label{fig:control_1}
 \end{figure}
 \end{frame}
@@ -163,19 +156,16 @@ Caixa para destaque com título
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/controle_1.PNG}
-    \caption{}
+    \caption{Diagrama de blocos do controlador proporcional}
     \label{fig:control_1}
 \end{figure}
 \end{frame}
 
-
-
-
-\begin{frame}{Resultados Controle Proporcional}
+\begin{frame}{Resultados do Controle Proporcional}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/saida_controle_1.png}
-    \caption{}
+    \caption{Resposta ao degrau na simulação}
     \label{fig:control_1}
 \end{figure}
 \end{frame}
@@ -183,7 +173,7 @@ Caixa para destaque com título
 
 \subsection{Projeto em Frequência}
 
-\begin{frame}{Segunda proposta de Controlador}
+\begin{frame}{Segunda Proposta de Controlador}
 
 Função de transferência da planta no domínio s:
 \begin{equation}
@@ -191,7 +181,7 @@ G(s) = \frac{0.5011(s+70.0259)}{(s+0.00058419)(s+4.19042)}
 \label{equacao_s}
 \end{equation}
 
-Estratégia: Anular o polo mais distante da planta e adicionar outro utilizando a equação de tempo de assentamento de uma sistema de segunda ordem:
+Estratégia: Anular o polo mais distante da planta e adicionar outro, utilizando a equação de tempo de assentamento de um sistema de segunda ordem:
 
 \begin{equation}
 \zeta \omega_{n}=\frac{4}{T_{s}}
@@ -204,7 +194,7 @@ G_{c}(s)=\frac{s+4.19042}{s+8}
 \end{equation}
 \end{frame}
 
-\begin{frame}{Segunda proposta de Controlador}
+\begin{frame}{Segunda Proposta de Controlador}
 
 \begin{figure}[H]
     \centering
@@ -216,7 +206,7 @@ G_{c}(s)=\frac{s+4.19042}{s+8}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\linewidth]{src/tex/img/bode.PNG}
-    \caption{Diagrama de bode}
+    \caption{Diagrama de Bode}
     \label{fig:lgr}
 \end{figure}
 
@@ -224,44 +214,44 @@ G_{c}(s)=\frac{s+4.19042}{s+8}
 
 
 
-\begin{frame}{Segunda proposta de Controlador}
+\begin{frame}{Segunda Proposta de Controlador}
 Equação final do controlador:
 \begin{equation}
-G_{c}(z)=3.46\frac{s - 0.7116}{z - 0.4493}
+G_{c}(z)=3.46\frac{z - 0.7116}{z - 0.4493}
 \label{novogcz}
 \end{equation}
 
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/controle_2.PNG}
-    \caption{}
+    \caption{Diagrama de blocos do controlador 2}
     \label{fig:control_2}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Resultados Segunda proposta de Controlador: Resposta ao degrau}
+\begin{frame}{Resultados da Segunda Proposta de Controlador}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/saida_controle_2.png}
-    \caption{}
+    \caption{Resposta ao degrau - controlador 2}
     \label{fig:controler1}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Resultados Segunda proposta de Controlador: Resposta a onda quadrada}
+\begin{frame}{Resultados da Segunda Proposta de Controlador}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/teste_square.PNG}
-    \caption{Resposta Controlador Atraso}
+    \caption{Resposta à onda quadrada}
     \label{fig:controler2}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Resposta em Hardware ao primeiro controlador}
+\begin{frame}{Resposta em Hardware do Primeiro Controlador}
 \begin{figure}
     \centering
     \includegraphics[width = \linewidth]{src/tex/img/resultado_controle_1_implem.PNG}
-    \caption{Resposta Planta - $K_p = 0.25$}
+    \caption{Resposta planta - $K_p = 0.25$}
     \label{fig:control_1}
 \end{figure}
 \end{frame}
@@ -271,21 +261,21 @@ G_{c}(z)=3.46\frac{s - 0.7116}{z - 0.4493}
 \begin{frame}{Conclusão}
 \begin{itemize}
     %\item Deu tudo errado
-    \item O sistema final ficou lento
-    \item Para variações lentas foi obtido um erro estacionário baixo
-    \item Erro cumulativo da leitura de posição
-    \item Controladores ajustados para a representação numérica
+    \item Sistema final lento;
+    \item Para variações lentas, foi obtido erro estacionário baixo;
+    \item Erro cumulativo da leitura de posição;
+    \item Comprometimento da precisão devido à representação numérica em binário.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Trabalhos Futuros}
 % Modelagem Matemática
 \begin{itemize}
-    \item Implementação de filtros para o encoder
-    \item Projeto controladores no espaço de estados
-    \item Projeto PID completo
-    \item Medir tempos usando hardware externo como forma de remover a necessidade da comunicação serial
-    \item Calibrar as medidas do enconder com base em um sistema externo.
+    \item Implementação de filtros para o encoder;
+    \item Projeto de controladores no espaço de estados;
+    \item Projeto de PID completo;
+    \item Medir tempos usando hardware externo como forma de remover a necessidade da comunicação serial;
+    \item Calibrar as medidas do encoder com base em sistema externo.
 \end{itemize}
 \end{frame}
 
@@ -301,6 +291,5 @@ G_{c}(z)=3.46\frac{s - 0.7116}{z - 0.4493}
 \bibliographystyle{abbrv} % Define Estilo e gera bibliografia
 \bibliography{references} % Adiciona Arquivo com Referências
 \end{frame}
-
 
 \end{document}
