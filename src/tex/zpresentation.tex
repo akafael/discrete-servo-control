@@ -76,7 +76,13 @@ Desenvolver um sistema de controle de posição em tempo discreto a partir de ha
 \end{frame}
 
 \begin{frame}{Modelo Sistema}
-    % TODO Colocar diagrama de blocos planta em malha aberta
+    \begin{figure}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{src/tex/img/system_open_loop.png}
+        \caption{Modelo em Malha Aberta}
+        \label{fig:system_model}
+    \end{figure}
+    
     \begin{block}{Transformada Z}
         \begin{equation}
         G(z) = \frac{Y(z)}{U(z)} = \beta K_e \ \alpha \frac{\left(e^{-\frac{T}{\alpha} + \frac{T^2}{\alpha}}\right)z + \left(e^{-\frac{T}{\alpha}}+e^{-\frac{T}{\alpha}}\frac{T^2}{\alpha}+1\right)  }{\left(z-1\right)\left(z-e^{-\frac{T}{\alpha}}\right)}
