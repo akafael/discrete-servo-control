@@ -1,13 +1,22 @@
-# Controle Discreto
+# Controle de Posição PID em tempo discreto
 
-Projeto final do curso de [Controle Digital](http://www.ene.unb.br/henrique/CDig/cdig.html) ministrado pelo professor [Henrique Cezar Ferreira](http://www.ene.unb.br/henrique/).
+Sistema de controle de posição baseado em Arduino desenvolvido em contunto com [@Leonardopcuser](https://github.com/Leonardopcuser) referente ao projeto final curso de [Controle Digital](http://www.ene.unb.br/henrique/CDig/cdig.html) ministrado pelo professor [Henrique Cezar Ferreira](http://www.ene.unb.br/henrique/).
 
 ## Descrição das Pastas
 
- * [ref](ref): Material de Apoio
- * [src](src): Códigos
+ * [data](data): Dados Experimentos
+ * [src](src): Códigos ( Arduino e Matlab )
+
+## Sistema
+
+![Arduino + Motor DC](https://github.com/akafael/discrete-servo-control/raw/main/src/tex/img/full_system.jpg)
 
 ## Referencias
+
+### Trabalhos anteriores
+
+ * [Controle PID em Arduino implementado no Tinkercad](https://github.com/akafael/pid-control)
+ * [Controle PID na planta rotativa da Quanser](https://github.com/akafael/pid-control-dc-motor)
 
 ### Videos
 
