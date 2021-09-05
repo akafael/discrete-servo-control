@@ -9,6 +9,12 @@ Sistema de controle de posição baseado em Arduino desenvolvido em contunto com
 
 ## Sistema
 
+### Simulação
+
+![Tinkercad Simulation: Arduino + Motor DC](https://github.com/akafael/discrete-servo-control/raw/main/src/tex/img/pid_tinkercad.png)
+
+### Real
+
 ![Arduino + Motor DC](https://github.com/akafael/discrete-servo-control/raw/main/src/tex/img/full_system.jpg)
 
 ## Referencias
